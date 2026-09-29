@@ -223,7 +223,7 @@ function buildRedirectUrl() {
   const next = params.get('next');
   if (next === 'post-jobs') return 'start-jobflow.html?openForm=jobs';
   if (next === 'post-gesuche') return 'start-jobflow.html?openForm=gesuche';
-  if (next) return next;
+  if (next && /^[a-z0-9-]+\.html(\?[^#]*)?$/i.test(next)) return next;
   return 'start-jobflow.html';
 }
 

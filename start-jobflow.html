@@ -829,6 +829,7 @@ let pendingDeepLinkId = null;
 let jobsData = [];
 let gesucheData = [];
 let jBildBase64 = null;
+let dataLoaded = false;
 
 const JOB_ARTEN = ["Minijob","Aushilfe","Praktikum","Ausbildung","Ferienjob","Vereinsarbeit","Sonstiges"];
 
@@ -858,6 +859,12 @@ const EMPTY_JOKES = [
   'Moin, hier tut sich gerade noch nichts.',
   'Gerade Flaute — aber nicht mehr lange.'
 ];
+function escapeHtml(str) {
+  return String(str == null ? '' : str)
+    .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+}
+
 function getRandomEmptyJoke() {
   return EMPTY_JOKES[Math.floor(Math.random() * EMPTY_JOKES.length)];
 }
@@ -1014,6 +1021,8 @@ function switchTab(tab) {
   document.getElementById('tab-gesuche').classList.toggle('active', tab === 'gesuche');
   document.getElementById('form-jobs').classList.remove('open');
   document.getElementById('form-gesuche').classList.remove('open');
+  const ortInput = document.getElementById('filter-ort');
+  if (ortInput) ortInput.value = '';
   renderFilters();
   renderList();
 }
@@ -1163,12 +1172,11 @@ function updateAuthUI() {
   }
 }
 
-onAuthStateChanged(auth, (user) => {
+onAuthStateChanged(auth, async (user) => {
   currentUser = user;
   updateAuthUI();
   if (user) {
-    loadSavedIds();
-    loadAccountType();
+    await Promise.all([loadSavedIds(), loadAccountType()]);
     handlePostLoginRedirect();
   } else {
     savedJobIds = [];
@@ -1176,6 +1184,8 @@ onAuthStateChanged(auth, (user) => {
     showingSaved = false;
     currentAccountType = null;
   }
+  renderFilters();
+  if (dataLoaded) renderList();
 });
 
 function handlePostLoginRedirect() {
@@ -1356,6 +1366,7 @@ function renderSwipeCard() {
   }
 }
 
+let swipeWindowHandlers = null;
 function setupSwipeGestures(card, stampSave, stampSkip, item) {
   let startX = 0;
   let currentX = 0;
@@ -1395,8 +1406,16 @@ function setupSwipeGestures(card, stampSave, stampSkip, item) {
   card.addEventListener('touchend', onEnd);
 
   card.addEventListener('mousedown', (e) => onStart(e.clientX));
-  window.addEventListener('mousemove', (e) => { if (dragging) onMove(e.clientX); });
-  window.addEventListener('mouseup', onEnd);
+  if (swipeWindowHandlers) {
+    window.removeEventListener('mousemove', swipeWindowHandlers.move);
+    window.removeEventListener('mouseup', swipeWindowHandlers.up);
+  }
+  swipeWindowHandlers = {
+    move: (e) => { if (dragging) onMove(e.clientX); },
+    up: onEnd
+  };
+  window.addEventListener('mousemove', swipeWindowHandlers.move);
+  window.addEventListener('mouseup', swipeWindowHandlers.up);
 
   document.getElementById('swipe-save-btn').onclick = () => finishSwipe(card, item, true);
   document.getElementById('swipe-skip-btn').onclick = () => finishSwipe(card, item, false);
@@ -1404,6 +1423,8 @@ function setupSwipeGestures(card, stampSave, stampSkip, item) {
 }
 
 function finishSwipe(card, item, saved) {
+  if (card.dataset.done) return;
+  card.dataset.done = '1';
   const flyX = saved ? window.innerWidth : -window.innerWidth;
   card.style.transform = 'translateX(' + flyX + 'px) rotate(' + (saved ? 20 : -20) + 'deg)';
   card.style.opacity = '0';
@@ -1568,6 +1589,7 @@ async function submitJob() {
     document.getElementById('form-jobs').classList.remove('open');
     await loadJobs();
     renderList();
+    updateHeroStat();
     renderOrtMap();
     showIsland(ICONS.check, 'Anzeige veröffentlicht', { onClick: scrollToList });
   } catch (e) {
@@ -1618,6 +1640,7 @@ async function submitGesuch() {
     document.getElementById('form-gesuche').classList.remove('open');
     await loadGesuche();
     renderList();
+    updateHeroStat();
     renderOrtMap();
     showIsland(ICONS.check, 'Gesuch veröffentlicht', { onClick: scrollToList });
   } catch (e) {
@@ -1749,12 +1772,16 @@ function resetAllFilters() {
   showingSaved = false;
   const heroInput = document.getElementById('hero-search-input');
   if (heroInput) heroInput.value = '';
+  const ortInput = document.getElementById('filter-ort');
+  if (ortInput) ortInput.value = '';
   renderFilters();
   renderList();
 }
 
 function renderFilters() {
   const row = document.getElementById('filter-row');
+  const prevOrtInput = document.getElementById('filter-ort');
+  const prevOrtValue = prevOrtInput ? prevOrtInput.value : '';
   row.innerHTML = '';
 
   const artWrap = document.createElement('div');
@@ -1809,6 +1836,8 @@ function renderFilters() {
   ortInput.type = 'text';
   ortInput.id = 'filter-ort';
   ortInput.placeholder = 'Ort filtern...';
+  ortInput.setAttribute('aria-label', 'Ort filtern');
+  ortInput.value = prevOrtValue;
   row.appendChild(ortInput);
   let ortIslandDebounce = null;
   ortInput.addEventListener('input', () => {
@@ -1894,7 +1923,8 @@ function getFilteredData() {
 
   const data = currentTab === 'jobs' ? jobsData.concat(EXAMPLE_JOBS) : gesucheData;
   const savedList = currentTab === 'jobs' ? savedJobIds : savedGesucheIds;
-  const todayStr = new Date().toISOString().slice(0, 10);
+  const now = new Date();
+  const todayStr = now.getFullYear() + '-' + String(now.getMonth() + 1).padStart(2, '0') + '-' + String(now.getDate()).padStart(2, '0');
   const filtered = data.filter(item => {
     const matchArt = !selectedArten.length || selectedArten.includes(item.art);
     const matchOrt = !ortFilter || (item.ort || '').toLowerCase().includes(ortFilter);
@@ -1984,7 +2014,7 @@ function renderList() {
     const tag = document.createElement('span');
     tag.className = 'tag';
     const artIcon = ART_ICONS[item.art] || '';
-    tag.innerHTML = (artIcon ? '<span class="tag-icon">' + artIcon + '</span>' : '') + item.art + (item.beispiel ? ' · Beispiel' : '');
+    tag.innerHTML = (artIcon ? '<span class="tag-icon">' + artIcon + '</span>' : '') + escapeHtml(item.art) + (item.beispiel ? ' · Beispiel' : '');
     top.appendChild(h3);
     top.appendChild(tag);
     body.appendChild(top);
@@ -2072,7 +2102,7 @@ function renderList() {
       : 'Interesse an deinem Gesuch: ' + item.name;
     link.href = 'mailto:' + item.email + '?subject=' + encodeURIComponent(mailSubject);
     link.className = 'meta-contact';
-    link.innerHTML = '<span class="meta-icon">' + ICONS.mail + '</span><span class="meta-contact-text"><span class="meta-contact-label">Kontakt</span>' + item.email + '</span>';
+    link.innerHTML = '<span class="meta-icon">' + ICONS.mail + '</span><span class="meta-contact-text"><span class="meta-contact-label">Kontakt</span>' + escapeHtml(item.email) + '</span>';
     metaLeft.appendChild(link);
 
     const listingLink = buildListingLink(currentTab, item.id);
@@ -2278,6 +2308,7 @@ function renderList() {
     };
     card.addEventListener('click', toggle);
     card.addEventListener('keydown', (e) => {
+      if (e.target !== card) return;
       if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggle(); }
     });
     if (imgEl) {
@@ -2294,6 +2325,7 @@ function renderList() {
   if (viewMode === 'swipe') {
     swipeQueue = filtered.slice();
     swipeIndex = 0;
+    swipeHistory = [];
     renderSwipeCard();
   }
 
@@ -2318,6 +2350,7 @@ async function init() {
   renderFilters();
   showIsland(ICONS.spinner, 'Lade Anzeigen…', { spin: true, sticky: true });
   await Promise.all([loadJobs(), loadGesuche()]);
+  dataLoaded = true;
   hideIsland();
   handleDeepLink();
   renderList();
@@ -2349,6 +2382,7 @@ function updateHeroStat() {
 }
 
 window.toggleMenu = toggleMenu;
+window.closeMenu = closeMenu;
 window.scrollToList = scrollToList;
 window.handleHeroSearch = handleHeroSearch;
 window.switchTab = switchTab;
