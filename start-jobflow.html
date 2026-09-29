@@ -427,18 +427,20 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
 }
 .tile-place { margin-top: 10px; color: var(--muted); font-size: 15px; display: flex; align-items: center; gap: 5px; flex-wrap: wrap; }
 .tile-visual {
-  position: relative; margin-top: auto; height: 50%; overflow: hidden; color: #fff;
+  position: relative; margin-top: auto; height: 50%; overflow: hidden; color: #D2D2D7; border-top: 1px solid var(--border);
   display: flex; flex-direction: column; justify-content: flex-start; padding: 84px 30px 80px;
 }
 .tile-visual img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transition: transform 0.8s var(--ease); }
+.tile.has-image .tile-visual { height: 58%; border-top: none; }
+.tile-visual img, .sheet-media img, .swipe-card-media img { object-position: center 30%; }
 .tile:hover .tile-visual img { transform: scale(1.04); }
-.tile-visual .tile-icon { position: absolute; top: 26px; left: 30px; width: 40px; height: 40px; opacity: 0.9; }
+.tile-visual .tile-icon { position: absolute; top: 26px; left: 30px; width: 40px; height: 40px; color: var(--accent); }
 .tile-visual .tile-icon svg { width: 100%; height: 100%; }
 .tile-desc {
   position: relative; font-size: 17px; line-height: 1.4; font-weight: 500; letter-spacing: -0.015em;
   display: -webkit-box; -webkit-line-clamp: 4; -webkit-box-orient: vertical; overflow: hidden;
 }
-.tile-initials { position: relative; margin-top: auto; font-size: 76px; font-weight: 800; letter-spacing: -0.05em; line-height: 1; opacity: 0.95; }
+.tile-initials { position: relative; margin-top: auto; font-size: 76px; font-weight: 800; letter-spacing: -0.05em; line-height: 1; color: var(--accent); }
 .tile-open {
   position: absolute; right: 22px; bottom: 22px; z-index: 3; width: 40px; height: 40px; border-radius: 50%;
   display: grid; place-items: center; cursor: pointer; padding: 0;
@@ -515,7 +517,8 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
 .sheet-close:hover { transform: rotate(90deg); background: rgba(0,0,0,0.7); }
 .sheet-close svg { width: 16px; height: 16px; }
 .sheet-content { overflow-y: auto; overscroll-behavior: contain; }
-.sheet-media { position: relative; height: 180px; display: grid; place-items: center; font-size: 64px; font-weight: 800; color: rgba(255,255,255,0.92); letter-spacing: -0.04em; }
+.sheet-media { position: relative; height: 180px; display: grid; place-items: center; font-size: 64px; font-weight: 800; color: var(--accent); letter-spacing: -0.04em; border-bottom: 1px solid var(--border); }
+.sheet-media:has(img) { height: 260px; }
 .sheet-media img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
 .sheet-body { padding: 24px 28px 30px; }
 .sheet-body h2 { font-size: clamp(28px, 4vw, 36px); font-weight: 800; letter-spacing: -0.04em; }
@@ -606,9 +609,11 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
 .char-count { font-size: 12.5px; color: var(--dim); text-align: right; margin-top: 6px; }
 .field-note { font-size: 13px; color: var(--dim); margin-top: 7px; }
 .form-actions { display: flex; gap: 12px; align-items: center; justify-content: center; margin-top: 34px; flex-wrap: wrap; }
-.img-preview { margin-top: 12px; display: flex; align-items: center; gap: 12px; }
-.img-preview img { width: 64px; height: 64px; object-fit: cover; border-radius: 12px; }
-.img-preview button { background: none; border: none; color: var(--accent); font-size: 14px; cursor: pointer; font-weight: 600; }
+.img-preview { margin-top: 12px; display: flex; align-items: center; gap: 14px; }
+.img-preview img { width: 120px; height: 150px; object-fit: cover; border-radius: 14px; border: 1px solid var(--border-strong); }
+.img-preview-side { display: flex; flex-direction: column; align-items: flex-start; gap: 6px; }
+.img-preview-side span { font-size: 13px; color: var(--muted); }
+.img-preview button { background: none; border: none; color: var(--accent); font-size: 14px; cursor: pointer; font-weight: 600; padding: 0; }
 .error-msg { color: var(--danger); font-size: 14.5px; margin-top: 18px; text-align: center; }
 
 /* ---------- Statement: Wort-für-Wort + Surfer ---------- */
@@ -770,7 +775,7 @@ footer { background: var(--bg-2); padding: 30px 0 40px; overflow: hidden; }
   .swipe-card-depth-0 { z-index: 3; }
   .swipe-card-depth-1 { z-index: 2; transform: scale(0.94) translateY(16px); opacity: 0.7; pointer-events: none; }
   .swipe-card-depth-2 { z-index: 1; transform: scale(0.88) translateY(30px); opacity: 0.4; pointer-events: none; }
-  .swipe-card-media { height: 170px; flex-shrink: 0; position: relative; display: grid; place-items: center; font-size: 56px; font-weight: 800; color: rgba(255,255,255,0.92); }
+  .swipe-card-media { height: 170px; flex-shrink: 0; position: relative; display: grid; place-items: center; font-size: 56px; font-weight: 800; color: var(--accent); border-bottom: 1px solid var(--border); }
   .swipe-card-media img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
   .swipe-card-inner { padding: 20px 22px; display: flex; flex-direction: column; flex: 1; min-height: 0; }
   .swipe-card-tag { font-size: 13px; color: var(--muted); font-weight: 600; margin-bottom: 8px; }
@@ -943,7 +948,7 @@ footer { background: var(--bg-2); padding: 30px 0 40px; overflow: hidden; }
       <div class="field">
         <label for="j-bild">Bild (optional)</label>
         <input type="file" id="j-bild" accept="image/*" onchange="handleImage(event)">
-        <div class="field-note">z.B. Logo oder Foto. Wird automatisch verkleinert.</div>
+        <div class="field-note">z.B. Logo oder Foto vom Betrieb. Wird groß auf der Karte gezeigt.</div>
         <div class="img-preview" id="j-bild-preview" style="display:none;"></div>
       </div>
       <div class="field full"><label for="j-beschreibung">Beschreibung</label><textarea id="j-beschreibung" placeholder="Worum geht's, welche Zeiten, was wird gesucht?" oninput="document.getElementById('j-char-count').textContent = this.value.length + ' Zeichen';"></textarea><div class="char-count" id="j-char-count">0 Zeichen</div></div>
@@ -979,6 +984,12 @@ footer { background: var(--bg-2); padding: 30px 0 40px; overflow: hidden; }
       </div>
       <div class="field"><label for="g-ort">Ort / Umkreis</label><input type="text" id="g-ort" placeholder="z.B. Emden, bis 15 km"></div>
       <div class="field"><label for="g-verfuegbarkeit">Verfügbarkeit</label><input type="text" id="g-verfuegbarkeit" placeholder="Nachmittags, Wochenende, Sommerferien"></div>
+      <div class="field full">
+        <label for="g-bild">Foto (optional)</label>
+        <input type="file" id="g-bild" accept="image/*" onchange="handleImage(event)">
+        <div class="field-note">Wird groß auf deiner Karte gezeigt. Dein Profilbild wird automatisch vorgeschlagen.</div>
+        <div class="img-preview" id="g-bild-preview" style="display:none;"></div>
+      </div>
       <div class="field full"><label for="g-beschreibung">Kurz über dich</label><textarea id="g-beschreibung" placeholder="Alter, Erfahrung, was du gerne machst..." oninput="document.getElementById('g-char-count').textContent = this.value.length + ' Zeichen';"></textarea><div class="char-count" id="g-char-count">0 Zeichen</div></div>
       <div class="field full">
         <label for="g-email">Kontakt-E-Mail</label>
@@ -1148,7 +1159,9 @@ let swipeHistory = [];
 let pendingDeepLinkId = null;
 let jobsData = [];
 let gesucheData = [];
-let jBildBase64 = null;
+// Bilder aus den Formularen: j = Jobangebot, g = Gesuch
+const formBilder = { j: null, g: null };
+let currentProfilbild = null;
 let dataLoaded = false;
 
 const JOB_ARTEN = ["Minijob","Aushilfe","Praktikum","Ausbildung","Ferienjob","Vereinsarbeit","Sonstiges"];
@@ -1556,7 +1569,10 @@ function switchTab(tab) {
 function toggleForm() {
   const el = document.getElementById(currentTab === 'jobs' ? 'form-jobs' : 'form-gesuche');
   el.classList.toggle('open');
-  if (el.classList.contains('open')) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  if (el.classList.contains('open')) {
+    if (currentTab === 'gesuche') prefillGesuchBild();
+    el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
 }
 
 const FORM_FIELDS = {
@@ -1572,7 +1588,7 @@ function clearForm(type) {
   const prefix = type === 'jobs' ? 'j' : 'g';
   const count = document.getElementById(prefix + '-char-count');
   if (count) count.textContent = '0 Zeichen';
-  if (type === 'jobs') removeImage();
+  removeImage(type === 'jobs' ? 'j' : 'g');
   document.getElementById('form-' + type).classList.remove('open');
 }
 
@@ -1617,6 +1633,7 @@ function duplicateListing(item, type) {
     document.getElementById('j-frist').value = item.bewerbungsfrist || '';
     document.getElementById('j-beschreibung').value = item.beschreibung || '';
     document.getElementById('j-email').value = item.email || '';
+    if (item.bild) setFormBild('j', item.bild); else removeImage('j');
     const jCount = document.getElementById('j-char-count');
     if (jCount) jCount.textContent = (item.beschreibung || '').length + ' Zeichen';
     document.getElementById('form-jobs').classList.add('open');
@@ -1628,6 +1645,7 @@ function duplicateListing(item, type) {
     document.getElementById('g-verfuegbarkeit').value = item.verfuegbarkeit || '';
     document.getElementById('g-beschreibung').value = item.beschreibung || '';
     document.getElementById('g-email').value = item.email || '';
+    if (item.bild) setFormBild('g', item.bild); else removeImage('g');
     const gCount = document.getElementById('g-char-count');
     if (gCount) gCount.textContent = (item.beschreibung || '').length + ' Zeichen';
     document.getElementById('form-gesuche').classList.add('open');
@@ -1757,8 +1775,10 @@ async function loadAccountType() {
   try {
     const snap = await getDoc(doc(db, 'users', currentUser.uid));
     currentAccountType = snap.exists() ? (snap.data().accountType || null) : null;
+    currentProfilbild = snap.exists() ? (snap.data().profilbild || null) : null;
   } catch (e) {
     currentAccountType = null;
+    currentProfilbild = null;
   }
 }
 
@@ -2001,8 +2021,9 @@ function updateSwipeProgress() {
 }
 
 function handleImage(event) {
+  const prefix = event.target.id.startsWith('g-') ? 'g' : 'j';
   const file = event.target.files[0];
-  const errorEl = document.getElementById('j-error');
+  const errorEl = document.getElementById(prefix + '-error');
   errorEl.style.display = 'none';
   if (!file) return;
   if (!file.type.startsWith('image/')) {
@@ -2042,17 +2063,7 @@ function handleImage(event) {
         return;
       }
 
-      jBildBase64 = result;
-      const preview = document.getElementById('j-bild-preview');
-      preview.style.display = 'flex';
-      preview.innerHTML = '';
-      const img = document.createElement('img');
-      img.src = jBildBase64;
-      const btn = document.createElement('button');
-      btn.textContent = 'Entfernen';
-      btn.onclick = removeImage;
-      preview.appendChild(img);
-      preview.appendChild(btn);
+      setFormBild(prefix, result);
     };
     tempImg.onerror = () => {
       errorEl.textContent = 'Bild konnte nicht gelesen werden.';
@@ -2067,11 +2078,41 @@ function handleImage(event) {
   reader.readAsDataURL(file);
 }
 
-function removeImage() {
-  jBildBase64 = null;
-  document.getElementById('j-bild').value = '';
-  document.getElementById('j-bild-preview').style.display = 'none';
-  document.getElementById('j-bild-preview').innerHTML = '';
+function setFormBild(prefix, dataUrl, hint) {
+  formBilder[prefix] = dataUrl;
+  const preview = document.getElementById(prefix + '-bild-preview');
+  preview.style.display = 'flex';
+  preview.innerHTML = '';
+  const img = document.createElement('img');
+  img.src = dataUrl;
+  img.alt = 'Vorschau';
+  const side = document.createElement('div');
+  side.className = 'img-preview-side';
+  if (hint) {
+    const note = document.createElement('span');
+    note.textContent = hint;
+    side.appendChild(note);
+  }
+  const btn = document.createElement('button');
+  btn.type = 'button';
+  btn.textContent = 'Entfernen';
+  btn.onclick = () => removeImage(prefix);
+  side.appendChild(btn);
+  preview.appendChild(img);
+  preview.appendChild(side);
+}
+
+function removeImage(prefix) {
+  prefix = prefix === 'g' ? 'g' : 'j';
+  formBilder[prefix] = null;
+  document.getElementById(prefix + '-bild').value = '';
+  document.getElementById(prefix + '-bild-preview').style.display = 'none';
+  document.getElementById(prefix + '-bild-preview').innerHTML = '';
+}
+
+// Beim Gesuch das Profilbild als Foto vorschlagen (lässt sich entfernen oder ersetzen)
+function prefillGesuchBild() {
+  if (!formBilder.g && currentProfilbild) setFormBild('g', currentProfilbild, 'Dein Profilbild');
 }
 
 async function submitJob() {
@@ -2098,7 +2139,7 @@ async function submitJob() {
   }
   errorEl.style.display = 'none';
 
-  const data = { firma, titel, art, ort, beschreibung, email, bewerbungsfrist: frist || null, bild: jBildBase64, erstellt: Date.now(), erstelltVon: currentUser.uid, verifiziert: !!currentUser.emailVerified };
+  const data = { firma, titel, art, ort, beschreibung, email, bewerbungsfrist: frist || null, bild: formBilder.j, erstellt: Date.now(), erstelltVon: currentUser.uid, verifiziert: !!currentUser.emailVerified };
 
   showIsland(ICONS.spinner, 'Wird gespeichert…', { spin: true, sticky: true });
 
@@ -2139,7 +2180,7 @@ async function submitGesuch() {
   }
   errorEl.style.display = 'none';
 
-  const data = { name, art, ort, verfuegbarkeit, beschreibung, email, erstellt: Date.now(), erstelltVon: currentUser.uid, username: currentUser.displayName || null };
+  const data = { name, art, ort, verfuegbarkeit, beschreibung, email, bild: formBilder.g || null, erstellt: Date.now(), erstelltVon: currentUser.uid, username: currentUser.displayName || null };
 
   showIsland(ICONS.spinner, 'Wird gespeichert…', { spin: true, sticky: true });
 
@@ -2193,7 +2234,7 @@ async function retryLoad() {
   renderOrtMap();
 }
 
-const AVATAR_COLORS = ['#E8692A', '#2C2C31', '#8C3F17', '#3A3530', '#C4541C', '#46464D'];
+const AVATAR_COLORS = ['#1C1C1F'];
 function getAvatarColor(str) {
   let hash = 0;
   for (let i = 0; i < str.length; i++) hash = str.charCodeAt(i) + ((hash << 5) - hash);
@@ -2487,7 +2528,7 @@ function buildMedia(item, type, className) {
   media.className = className;
   const seed = (type === 'jobs' ? (item.firma || item.titel) : item.name) || '?';
   media.style.background = getAvatarColor(seed);
-  if (type === 'jobs' && item.bild) {
+  if (item.bild) {
     const img = document.createElement('img');
     img.src = item.bild;
     img.alt = '';
@@ -2614,7 +2655,8 @@ function buildTile(item, type) {
   // Unten: Bild der Anzeige – oder farbige Fläche mit Art-Symbol und Beschreibung
   const visual = document.createElement('div');
   visual.className = 'tile-visual';
-  if (type === 'jobs' && item.bild) {
+  if (item.bild) {
+    tile.classList.add('has-image');
     const img = document.createElement('img');
     img.src = item.bild;
     img.alt = '';
