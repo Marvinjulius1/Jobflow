@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Über uns — Jobflow</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #ECECEC;
+    --ink-soft: #C9C9C9;
+    --paper: #232323;
+    --paper-dim: #2C2C2C;
+    --line: #3D3D3D;
+    --muted: #A0A0A0;
+    --accent: #E07B39;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: 'Inter', sans-serif;
+    font-size: 16px;
+    line-height: 1.65;
+    -webkit-font-smoothing: antialiased;
+  }
+  h1, h2, h3 { font-family: 'Fraunces', serif; font-weight: 500; color: var(--ink); line-height: 1.08; letter-spacing: -0.01em; }
+  .wrap { max-width: 1120px; margin: 0 auto; padding: 0 40px; }
+
+  /* NAV */
+  nav.top { padding: 30px 0; border-bottom: 1px solid var(--line); }
+  nav.top .wrap { display: flex; justify-content: space-between; align-items: center; }
+  .wordmark { font-family: 'Fraunces', serif; font-size: 20px; font-weight: 500; letter-spacing: -0.01em; }
+  .wordmark .job { color: var(--ink); }
+  .wordmark .flow { color: var(--accent); }
+
+  .menu-wrap { position: relative; }
+  .menu-btn {
+    background: none; border: none; cursor: pointer; padding: 10px 8px;
+    display: flex; flex-direction: column; gap: 5px; justify-content: center;
+  }
+  .menu-btn span { display: block; width: 22px; height: 2px; background: var(--ink); transition: transform 0.2s ease, opacity 0.2s ease; }
+  .menu-btn.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+  .menu-btn.open span:nth-child(2) { opacity: 0; }
+  .menu-btn.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+  .menu-dropdown {
+    display: none; position: absolute; top: calc(100% + 14px); left: 0; min-width: 220px;
+    background: var(--paper); border: 1px solid var(--line); border-radius: 2px;
+    flex-direction: column; padding: 8px 0; z-index: 20;
+  }
+  .menu-dropdown.open { display: flex; }
+  .menu-dropdown a {
+    color: var(--ink); text-decoration: none; font-size: 14.5px; padding: 11px 20px;
+    display: flex; align-items: center; gap: 12px;
+  }
+  .menu-dropdown a:hover { background: var(--paper-dim); color: var(--accent); }
+  .menu-icon { display: inline-flex; width: 17px; height: 17px; flex-shrink: 0; }
+  .menu-icon svg { width: 100%; height: 100%; }
+
+  .hero-logo-wrap {
+    display: flex; justify-content: center; margin-bottom: 56px; perspective: 800px;
+  }
+  .hero-logo {
+    font-family: 'Fraunces', serif; font-weight: 500; font-size: 88px; letter-spacing: -0.01em;
+    cursor: default; transform-style: preserve-3d; backface-visibility: visible;
+  }
+  .hero-logo .job { color: var(--ink); }
+  .hero-logo .flow { color: var(--accent); }
+  .nav-links { display: flex; gap: 36px; align-items: center; }
+  .nav-links a { color: var(--ink); text-decoration: none; font-size: 14.5px; }
+  .nav-links a:hover { color: var(--accent); }
+  .nav-links .cta {
+    border: 1.5px solid var(--accent); padding: 9px 22px; border-radius: 30px; font-size: 14px;
+  }
+  .nav-links .cta:hover { background: var(--accent); color: var(--paper); border-color: var(--accent); }
+
+  /* HERO */
+  .hero { padding: 130px 0 110px; border-bottom: 1px solid var(--line); }
+  .hero .kicker { font-size: 14.5px; color: var(--accent); margin-bottom: 26px; }
+  .hero h1 {
+    font-size: 64px; max-width: 13ch; margin-bottom: 32px;
+  }
+  .hero p { color: var(--muted); max-width: 46ch; font-size: 18px; margin-bottom: 40px; }
+  .hero-link { font-size: 15px; color: var(--ink); text-decoration: none; border-bottom: 1px solid var(--ink); padding-bottom: 3px; }
+  .hero-link:hover { color: var(--accent); border-color: var(--accent); }
+  .hero-stat { margin-top: 32px; font-size: 14px; color: var(--muted); }
+  .hero-stat strong { color: var(--accent); font-weight: 600; }
+
+  .about { padding: 64px 0; border-bottom: 1px solid var(--line); }
+  .about h2 { font-size: 26px; margin-bottom: 16px; }
+  .about p { color: var(--muted); font-size: 16px; max-width: 68ch; }
+
+  /* SECTION HEADER */
+  .section-top {
+    display: flex; justify-content: space-between; align-items: flex-end;
+    padding: 90px 0 44px; flex-wrap: wrap; gap: 20px;
+  }
+  .section-top h2 { font-size: 38px; }
+  .section-top .count { color: var(--muted); font-size: 15px; }
+
+  .tabs-inline { display: flex; gap: 34px; }
+  .tab-btn {
+    background: none; border: none; cursor: pointer; font-family: 'Inter', sans-serif;
+    font-size: 15px; color: var(--muted); padding: 0 0 6px; border-bottom: 1px solid transparent;
+  }
+  .tab-btn.active { color: var(--ink); border-bottom-color: var(--accent); }
+
+  .toolbar { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px; margin-bottom: 44px; }
+  .filter-row { display: flex; gap: 12px; flex-wrap: wrap; }
+  .filter-row select, .filter-row input {
+    padding: 10px 4px; border: none; border-bottom: 1px solid var(--line); background: transparent;
+    font-family: 'Inter', sans-serif; font-size: 14.5px; color: var(--ink); min-width: 150px;
+  }
+  .filter-row select:focus, .filter-row input:focus { border-bottom-color: var(--accent); outline: none; }
+
+  .btn {
+    display: inline-block; padding: 13px 26px; font-size: 14.5px; font-weight: 500;
+    text-decoration: none; cursor: pointer; border: 1px solid var(--ink); border-radius: 2px;
+    background: var(--ink); color: var(--paper); transition: background 0.15s ease, color 0.15s ease;
+  }
+  .btn:hover { background: var(--accent); border-color: var(--accent); }
+  .btn-ghost { background: transparent; color: var(--ink); }
+  .btn-ghost:hover { background: var(--ink); color: var(--paper); }
+
+  /* LISTINGS — hairline rows instead of boxed cards */
+  .listing-card {
+    border: 1px solid var(--line); border-radius: 4px; background: var(--paper-dim);
+    padding: 26px 28px; margin-bottom: 16px; cursor: pointer;
+    transition: border-color 0.15s ease;
+  }
+  .listing-card:hover { border-color: var(--accent); }
+  .listing-card-head { display: flex; gap: 24px; align-items: flex-start; }
+  .listing-card img { width: 84px; height: 84px; object-fit: cover; flex-shrink: 0; border-radius: 3px; transition: width 0.25s ease, height 0.25s ease; }
+  .listing-card.expanded img { width: 100%; height: 240px; margin-bottom: 20px; }
+  .listing-card.expanded .listing-card-head { flex-direction: column; }
+  .listing-body { flex: 1; min-width: 0; }
+  .listing-top { display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; align-items: baseline; }
+  .listing-card h3 { font-size: 21px; font-weight: 500; }
+  .listing-card .tag { font-size: 13px; color: var(--muted); white-space: nowrap; }
+  .listing-card .place { font-size: 14px; color: var(--accent); margin: 6px 0 8px; }
+  .listing-card .meta-username { font-size: 13px; color: var(--muted); margin: 0 0 10px; }
+  .listing-card .expand-body { display: none; }
+  .listing-card.expanded .expand-body { display: block; margin-top: 16px; }
+  .listing-card p.desc { color: var(--muted); font-size: 15px; margin-bottom: 18px; max-width: 62ch; }
+
+  .meta {
+    display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap;
+    gap: 16px; padding-top: 16px; border-top: 1px solid var(--line);
+  }
+  .meta-left { display: flex; align-items: center; gap: 20px; flex-wrap: wrap; }
+  .meta-right { display: flex; align-items: center; gap: 20px; }
+
+  .meta-contact {
+    display: inline-flex; align-items: center; gap: 10px;
+    padding: 9px 16px; border: 1px solid var(--line); border-radius: 20px;
+    background: var(--paper); color: var(--ink); text-decoration: none; font-size: 14px;
+    transition: border-color 0.15s ease;
+  }
+  .meta-contact:hover { border-color: var(--accent); }
+  .meta-contact .meta-icon { color: var(--accent); }
+  .meta-contact-text { display: flex; flex-direction: column; line-height: 1.25; }
+  .meta-contact-label { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.04em; }
+
+  .meta-action {
+    display: inline-flex; align-items: center; gap: 7px; background: none; border: none;
+    color: var(--muted); font-size: 13.5px; font-family: 'Inter', sans-serif;
+    text-decoration: none; cursor: pointer; padding: 0; transition: color 0.15s ease;
+  }
+  .meta-action:hover { color: var(--accent); }
+
+  .meta-icon { display: inline-flex; width: 17px; height: 17px; flex-shrink: 0; }
+  .meta-icon svg { width: 100%; height: 100%; }
+
+  .report-panel {
+    display: none; margin-top: 16px; padding: 16px 18px; background: var(--paper);
+    border: 1px solid var(--line); border-radius: 3px; align-items: center; gap: 14px; flex-wrap: wrap;
+  }
+  .report-panel.open { display: flex; }
+  .report-panel select {
+    padding: 8px 11px; border: 1px solid var(--line); background: var(--paper);
+    color: var(--ink); font-size: 13.5px; border-radius: 3px;
+  }
+  .btn-report-confirm {
+    background: var(--accent); color: var(--paper); border: none; padding: 9px 18px;
+    border-radius: 3px; font-size: 13px; cursor: pointer;
+  }
+  .btn-report-confirm:disabled { opacity: 0.6; cursor: default; }
+  .btn-delete-confirm { background: #A8402B; }
+  .btn-delete-cancel {
+    background: none; border: 1px solid var(--line); color: var(--muted);
+    padding: 9px 18px; border-radius: 3px; font-size: 13px; cursor: pointer;
+  }
+  .btn-delete-cancel:hover { border-color: var(--muted); }
+  .delete-link:hover { color: #A8402B; }
+  .report-status { font-size: 13px; color: var(--muted); }
+  .toggle-hint { font-size: 13px; color: var(--muted); margin-top: 4px; }
+  .toggle-hint .chev { display: inline-block; transition: transform 0.2s ease; margin-left: 4px; }
+  .listing-card.expanded .toggle-hint .chev { transform: rotate(180deg); }
+
+  .empty { color: var(--muted); font-size: 16px; padding: 60px 0; text-align: center; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+  .loading { color: var(--muted); font-size: 15px; padding: 40px 0; }
+  .error-msg { color: var(--accent); font-size: 14px; margin-top: 8px; }
+
+  /* FORM */
+  .form-panel { display: none; padding: 50px 0 60px; border-bottom: 1px solid var(--line); }
+  .form-panel.open { display: block; }
+  .form-panel h2 { font-size: 30px; margin-bottom: 6px; }
+  .form-panel .sub { color: var(--muted); font-size: 15px; margin-bottom: 36px; }
+  .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 28px 32px; max-width: 780px; }
+  .form-grid .full { grid-column: 1 / -1; }
+  .field label { display: block; font-size: 13.5px; color: var(--muted); margin-bottom: 8px; }
+  .field input, .field select, .field textarea {
+    width: 100%; padding: 10px 2px; border: none; border-bottom: 1px solid var(--line);
+    background: transparent; font-family: 'Inter', sans-serif; font-size: 16px; color: var(--ink);
+  }
+  .field input:focus, .field select:focus, .field textarea:focus { outline: none; border-bottom-color: var(--accent); }
+  .field textarea { resize: vertical; min-height: 70px; }
+  .field-note { font-size: 12.5px; color: var(--muted); margin-top: 6px; }
+  .form-actions { display: flex; gap: 16px; align-items: center; margin-top: 36px; }
+  .img-preview { margin-top: 10px; display: flex; align-items: center; gap: 12px; }
+  .img-preview img { width: 56px; height: 56px; object-fit: cover; }
+  .img-preview button { background: none; border: none; color: var(--accent); font-size: 13px; cursor: pointer; text-decoration: underline; padding: 0; }
+
+  /* LEGAL */
+  .legal-panel { display: none; padding: 50px 0; border-bottom: 1px solid var(--line); }
+  .legal-panel.open { display: block; }
+  .legal-panel h2 { font-size: 26px; margin-bottom: 10px; }
+  .legal-panel p { color: var(--muted); font-size: 14.5px; max-width: 70ch; margin-bottom: 24px; }
+
+  footer { padding: 40px 0; }
+  footer .wrap { display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 13.5px; color: var(--muted); gap: 12px; text-align: center; }
+  footer a { color: var(--muted); }
+
+  @media (max-width: 720px) {
+    .wrap { padding: 0 24px; }
+    .hero { padding: 80px 0 70px; }
+    .hero h1 { font-size: 40px; }
+    .hero-logo { font-size: 52px; }
+    .hero-logo-wrap { margin-bottom: 40px; }
+    .nav-links { gap: 18px; }
+    .nav-links a:not(.cta) { display: none; }
+    .section-top h2 { font-size: 28px; }
+    .form-grid { grid-template-columns: 1fr; }
+    .listing-card-head { flex-direction: column; }
+    .listing-card img { width: 100%; height: 160px; }
+  }
+  a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible {
+    outline: 1px solid var(--accent); outline-offset: 3px;
+  }
+
+#tide-overlay {
+  position: fixed; inset: 0; z-index: 9999; pointer-events: none;
+  animation: tide-recede 1.5s cubic-bezier(.65,0,.35,1) 0.15s forwards;
+}
+#tide-overlay svg { width: 100%; height: 100%; display: block; }
+@keyframes tide-recede { from { transform: translateY(0); } to { transform: translateY(100%); } }
+body.tide-loading { overflow: hidden; }
+@media (prefers-reduced-motion: reduce) {
+  #tide-overlay { display: none; }
+}
+
+.page-content { padding: 90px 0 110px; text-align: center; }
+.page-content h1 { font-size: 44px; margin: 0 auto 28px; max-width: 18ch; }
+.page-content h2 { font-size: 22px; margin: 40px auto 12px; }
+.page-content p { color: var(--muted); font-size: 16px; max-width: 68ch; margin: 0 auto 18px; }
+.page-content p:first-of-type { margin-top: 0; }
+</style>
+</head>
+<body>
+
+<nav class="top">
+  <div class="wrap">
+    <div class="menu-wrap">
+      <button class="menu-btn" onclick="toggleMenu()" aria-label="Menü öffnen" aria-expanded="false" id="menu-btn">
+        <span></span><span></span><span></span>
+      </button>
+      <div class="menu-dropdown" id="menu-dropdown">
+        <a href="start-jobflow.html#section-anchor"><span class="menu-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="M3 12h18"/></svg></span>Jobangebote</a>
+        <a href="start-jobflow.html#section-anchor"><span class="menu-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8" r="3.5"/><path d="M5 20c0-3.5 3-6 7-6s7 2.5 7 6"/></svg></span>Jobsuchende</a>
+        <a href="start-jobflow.html"><span class="menu-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 5v14M5 12h14"/></svg></span>Anzeige aufgeben</a>
+        <a href="ueberuns-jobflow.html"><span class="menu-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 21c-4-2.5-8-5.5-8-10.5C4 6.5 7 4 10 4c1 0 1.6.5 2 1 .4-.5 1-1 2-1 3 0 6 2.5 6 6.5 0 5-4 8-8 10.5Z"/></svg></span>Über uns</a>
+        <a href="impressum-datenschutz.html"><span class="menu-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M12 11v6"/><circle cx="12" cy="7.7" r="0.9" fill="currentColor" stroke="none"/></svg></span>Impressum & Datenschutz</a>
+        <a href="start-jobflow.html"><span class="menu-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="8" cy="15.5" r="3.2"/><path d="M10.3 13.2L18 5.5"/><path d="M15 8.5l2.5 2.5M17.5 6l2.5 2.5"/></svg></span>Anmelden</a>
+      </div>
+    </div>
+    <div class="nav-links">
+      <a href="start-jobflow.html#section-anchor">Jobangebote</a>
+      <a href="start-jobflow.html#section-anchor">Jobsuchende</a>
+      <a href="start-jobflow.html">Anmelden</a>
+      <a href="start-jobflow.html" class="cta">Anzeige aufgeben</a>
+    </div>
+  </div>
+</nav>
+
+<div class="wrap page-content">
+  <h1>Die Idee hinter Jobflow</h1>
+  <p>In Ostfriesland laufen Nebenjobs, Ferienjobs und Vereinsarbeit meistens über Zufall — eine WhatsApp-Gruppe, ein Aushang im Supermarkt, Mundpropaganda. Wer Hilfe sucht, weiß oft nicht, wo er fragen soll. Wer Hilfe anbietet, weiß nicht, wo er suchen soll.</p>
+  <p>Jobflow soll genau das lösen: ein zentraler, einfacher Ort für die ganze Region, an dem Unternehmen und Vereine Stellen einstellen und Jobsuchende ihre Präferenzen hinterlegen können — ohne Umwege, ohne Kosten für die Nutzung.</p>
+  <p>Das Projekt steckt noch am Anfang. Diese Seite wird mit der Zeit wachsen — mehr dazu bald.</p>
+</div>
+
+<footer>
+  <div class="wrap">
+    <div>Jobflow - Suche und Finde</div>
+    <div style="display:flex; gap:20px;">
+      <a href="ueberuns-jobflow.html">Über uns</a>
+      <a href="impressum-datenschutz.html">Impressum & Datenschutz</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+  function toggleMenu() {
+    document.getElementById('menu-btn').classList.toggle('open');
+    document.getElementById('menu-dropdown').classList.toggle('open');
+  }
+  function closeMenu() {
+    document.getElementById('menu-btn').classList.remove('open');
+    document.getElementById('menu-dropdown').classList.remove('open');
+  }
+  document.addEventListener('click', function (e) {
+    var menuWrap = document.querySelector('.menu-wrap');
+    if (menuWrap && !menuWrap.contains(e.target)) closeMenu();
+  });
+</script>
+
+</body>
+</html>

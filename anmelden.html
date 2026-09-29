@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Anmelden — Jobflow</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400;1,9..144,500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #ECECEC;
+    --ink-soft: #C9C9C9;
+    --paper: #232323;
+    --paper-dim: #2C2C2C;
+    --line: #3D3D3D;
+    --muted: #A0A0A0;
+    --accent: #E07B39;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scrollbar-color: var(--accent) var(--paper); scrollbar-width: thin; }
+  ::-webkit-scrollbar { width: 12px; }
+  ::-webkit-scrollbar-track { background: var(--paper); }
+  ::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 20px; }
+  ::-webkit-scrollbar-thumb:hover { background: #c96a2e; }
+
+  body {
+    background: var(--paper); color: var(--ink); font-family: 'Inter', sans-serif;
+    min-height: 100vh; display: flex; align-items: center; justify-content: center;
+    padding: 32px 20px; position: relative; overflow-x: hidden;
+  }
+
+  /* Weiche, dezente Leucht-Blobs im Hintergrund, sehr Apple-typisch */
+  .glow { position: fixed; border-radius: 50%; filter: blur(90px); pointer-events: none; z-index: 0; opacity: 0; animation: glow-in 1.8s ease forwards; }
+  .glow-1 { width: 420px; height: 420px; background: rgba(224,123,57,0.22); top: -140px; left: -120px; animation-delay: 0.1s; }
+  .glow-2 { width: 380px; height: 380px; background: rgba(224,123,57,0.14); bottom: -160px; right: -100px; animation-delay: 0.3s; }
+  @keyframes glow-in { to { opacity: 1; } }
+
+  .back-link {
+    position: fixed; top: 24px; left: 24px; z-index: 5;
+    display: flex; align-items: center; gap: 8px; color: var(--muted); text-decoration: none;
+    font-size: 14px; opacity: 0; animation: fade-down 0.6s ease 0.15s forwards;
+  }
+  .back-link:hover { color: var(--ink); }
+  .back-link svg { width: 16px; height: 16px; }
+  @keyframes fade-down { from { opacity: 0; transform: translateY(-8px); } to { opacity: 1; transform: none; } }
+
+  .auth-wrap { position: relative; z-index: 1; width: 100%; max-width: 420px; }
+
+  .auth-logo {
+    text-align: center; margin-bottom: 32px;
+    opacity: 0; animation: pop-in 0.7s cubic-bezier(0.22, 1, 0.36, 1) 0.05s forwards;
+  }
+  .auth-logo a {
+    font-family: 'Fraunces', serif; font-weight: 500; font-size: 30px; color: var(--ink);
+    text-decoration: none;
+  }
+  .auth-logo .flow { color: var(--accent); }
+
+  .auth-card {
+    background: var(--paper-dim); border: 1px solid var(--line); border-radius: 24px;
+    padding: 36px 32px; box-shadow: 0 24px 60px rgba(0,0,0,0.45);
+    opacity: 0; transform: translateY(28px) scale(0.96);
+    animation: card-in 0.75s cubic-bezier(0.22, 1, 0.36, 1) 0.18s forwards;
+  }
+  @keyframes pop-in { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: none; } }
+  @keyframes card-in { to { opacity: 1; transform: none; } }
+  @media (prefers-reduced-motion: reduce) {
+    .glow, .back-link, .auth-logo, .auth-card { animation: none !important; opacity: 1 !important; transform: none !important; }
+  }
+
+  .auth-heading { font-family: 'Fraunces', serif; font-weight: 500; font-size: 24px; text-align: center; margin-bottom: 6px; }
+  .auth-sub { color: var(--muted); font-size: 14px; text-align: center; margin-bottom: 26px; }
+
+  /* iOS-artiger Segment-Umschalter */
+  .segmented {
+    position: relative; display: flex; background: var(--paper); border: 1px solid var(--line);
+    border-radius: 14px; padding: 4px; margin-bottom: 26px;
+  }
+  .segmented-highlight {
+    position: absolute; top: 4px; left: 4px; width: calc(50% - 4px); height: calc(100% - 8px);
+    background: var(--accent); border-radius: 10px;
+    transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .segmented.mode-register .segmented-highlight { transform: translateX(100%); }
+  .segmented button {
+    flex: 1; position: relative; z-index: 1; background: none; border: none; cursor: pointer;
+    padding: 10px 0; font-family: 'Inter', sans-serif; font-size: 14px; font-weight: 600;
+    color: var(--muted); transition: color 0.25s ease;
+  }
+  .segmented button.active { color: #fff; }
+
+  .auth-fields { display: none; flex-direction: column; gap: 18px; }
+  .auth-fields.active { display: flex; }
+
+  .field label { display: block; font-size: 13px; color: var(--muted); margin-bottom: 7px; }
+  .field input {
+    width: 100%; padding: 11px 2px; border: none; border-bottom: 1px solid var(--line);
+    background: transparent; font-family: 'Inter', sans-serif; font-size: 16px; color: var(--ink);
+    transition: border-color 0.2s ease;
+  }
+  .field input:focus { outline: none; border-color: var(--accent); }
+
+  .account-type-row { display: flex; gap: 18px; flex-wrap: wrap; margin-top: 4px; }
+  .account-type-option { display: flex; align-items: center; gap: 7px; font-size: 14px; color: var(--ink); cursor: pointer; }
+  .account-type-option input { width: auto; accent-color: var(--accent); }
+
+  .auth-error {
+    display: none; background: rgba(224,90,57,0.12); border: 1px solid #A8402B; color: #F0A088;
+    font-size: 13.5px; padding: 10px 14px; border-radius: 10px; margin-top: 16px;
+  }
+
+  .auth-submit {
+    width: 100%; margin-top: 22px; padding: 14px 0; border: none; border-radius: 14px;
+    background: var(--accent); color: #fff; font-family: 'Inter', sans-serif; font-size: 15px;
+    font-weight: 600; cursor: pointer; transition: background 0.2s ease, transform 0.15s ease;
+  }
+  .auth-submit:hover { background: #c96a2e; }
+  .auth-submit:active { transform: scale(0.98); }
+  .auth-submit:disabled { opacity: 0.6; cursor: default; }
+
+  .auth-footnote { text-align: center; font-size: 13px; color: var(--muted); margin-top: 22px; }
+</style>
+</head>
+<body>
+
+<div class="glow glow-1"></div>
+<div class="glow glow-2"></div>
+
+<a href="start-jobflow.html" class="back-link">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 6l-6 6 6 6"/></svg>
+  Zurück zu Jobflow
+</a>
+
+<div class="auth-wrap">
+  <div class="auth-logo">
+    <a href="start-jobflow.html">Job<span class="flow">flow</span></a>
+  </div>
+
+  <div class="auth-card">
+    <div class="auth-heading" id="auth-heading">Willkommen zurück</div>
+    <div class="auth-sub" id="auth-sub">Melde dich an, um eine Anzeige aufzugeben.</div>
+
+    <div class="segmented" id="segmented">
+      <div class="segmented-highlight"></div>
+      <button type="button" class="active" id="seg-login" onclick="setMode('login')">Anmelden</button>
+      <button type="button" id="seg-register" onclick="setMode('register')">Registrieren</button>
+    </div>
+
+    <form id="auth-form" onsubmit="handleAuthSubmit(event)">
+      <div class="auth-fields active" id="fields-common-top">
+        <div class="field" id="username-field" style="display:none;">
+          <label for="auth-username">Nutzername</label>
+          <input type="text" id="auth-username" placeholder="Wie sollen wir dich nennen?">
+        </div>
+        <div class="field" id="accounttype-field" style="display:none;">
+          <label>Ich bin</label>
+          <div class="account-type-row">
+            <label class="account-type-option"><input type="radio" name="auth-account-type" value="unternehmen" checked> Unternehmen / Verein</label>
+            <label class="account-type-option"><input type="radio" name="auth-account-type" value="privat"> Privatperson</label>
+          </div>
+        </div>
+        <div class="field">
+          <label for="auth-email">E-Mail</label>
+          <input type="email" id="auth-email" placeholder="name@email.de" autocomplete="email">
+        </div>
+        <div class="field">
+          <label for="auth-password">Passwort</label>
+          <input type="password" id="auth-password" placeholder="Mindestens 6 Zeichen" autocomplete="current-password">
+        </div>
+      </div>
+
+      <div class="auth-error" id="auth-error"></div>
+      <button type="submit" class="auth-submit" id="auth-submit-btn">Anmelden</button>
+    </form>
+
+    <div class="auth-footnote">Zum Suchen brauchst du keine Anmeldung.</div>
+  </div>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-app.js";
+import {
+  getFirestore, doc, setDoc
+} from "https://www.gstatic.com/firebasejs/10.13.2/firebase-firestore.js";
+import {
+  getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, updateProfile,
+  sendEmailVerification, onAuthStateChanged
+} from "https://www.gstatic.com/firebasejs/10.13.2/firebase-auth.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyBatWo0ZNB21wqirju7ES6QY8wj5xjb2OU",
+  authDomain: "jobflow-ostfriesland.firebaseapp.com",
+  projectId: "jobflow-ostfriesland",
+  storageBucket: "jobflow-ostfriesland.firebasestorage.app",
+  messagingSenderId: "405280176207",
+  appId: "1:405280176207:web:50e93c97bae812e672523a"
+};
+const firebaseApp = initializeApp(firebaseConfig);
+const db = getFirestore(firebaseApp);
+const auth = getAuth(firebaseApp);
+
+let mode = 'login';
+
+function setMode(newMode) {
+  mode = newMode;
+  document.getElementById('segmented').classList.toggle('mode-register', mode === 'register');
+  document.getElementById('seg-login').classList.toggle('active', mode === 'login');
+  document.getElementById('seg-register').classList.toggle('active', mode === 'register');
+  document.getElementById('username-field').style.display = mode === 'register' ? 'block' : 'none';
+  document.getElementById('accounttype-field').style.display = mode === 'register' ? 'block' : 'none';
+  document.getElementById('auth-heading').textContent = mode === 'login' ? 'Willkommen zurück' : 'Konto erstellen';
+  document.getElementById('auth-sub').textContent = mode === 'login'
+    ? 'Melde dich an, um eine Anzeige aufzugeben.'
+    : 'Dauert nur eine Minute.';
+  document.getElementById('auth-submit-btn').textContent = mode === 'login' ? 'Anmelden' : 'Registrieren';
+  document.getElementById('auth-error').style.display = 'none';
+}
+window.setMode = setMode;
+
+function buildRedirectUrl() {
+  const params = new URLSearchParams(location.search);
+  const next = params.get('next');
+  if (next === 'post-jobs') return 'start-jobflow.html?openForm=jobs';
+  if (next === 'post-gesuche') return 'start-jobflow.html?openForm=gesuche';
+  if (next) return next;
+  return 'start-jobflow.html';
+}
+
+async function handleAuthSubmit(event) {
+  event.preventDefault();
+  const username = document.getElementById('auth-username').value.trim();
+  const email = document.getElementById('auth-email').value.trim();
+  const password = document.getElementById('auth-password').value;
+  const errorEl = document.getElementById('auth-error');
+  const submitBtn = document.getElementById('auth-submit-btn');
+  errorEl.style.display = 'none';
+
+  if (!email || !password) {
+    errorEl.textContent = 'Bitte E-Mail und Passwort ausfüllen.';
+    errorEl.style.display = 'block';
+    return;
+  }
+  if (mode === 'register' && username.length < 2) {
+    errorEl.textContent = 'Bitte einen Nutzernamen mit mindestens 2 Zeichen angeben.';
+    errorEl.style.display = 'block';
+    return;
+  }
+  if (mode === 'register' && password.length < 6) {
+    errorEl.textContent = 'Das Passwort muss mindestens 6 Zeichen haben.';
+    errorEl.style.display = 'block';
+    return;
+  }
+
+  submitBtn.disabled = true;
+  submitBtn.textContent = mode === 'login' ? 'Wird angemeldet…' : 'Wird erstellt…';
+
+  try {
+    if (mode === 'login') {
+      await signInWithEmailAndPassword(auth, email, password);
+    } else {
+      const cred = await createUserWithEmailAndPassword(auth, email, password);
+      await updateProfile(cred.user, { displayName: username });
+      const accountTypeInput = document.querySelector('input[name="auth-account-type"]:checked');
+      const accountType = accountTypeInput ? accountTypeInput.value : 'unternehmen';
+      try { await setDoc(doc(db, 'users', cred.user.uid), { accountType }, { merge: true }); } catch (e) {}
+      try { await sendEmailVerification(cred.user); } catch (e) {}
+    }
+    window.location.href = buildRedirectUrl();
+  } catch (e) {
+    const messages = {
+      'auth/email-already-in-use': 'Diese E-Mail ist bereits registriert. Bitte stattdessen anmelden.',
+      'auth/invalid-email': 'Das ist keine gültige E-Mail-Adresse.',
+      'auth/weak-password': 'Das Passwort ist zu schwach (mindestens 6 Zeichen).',
+      'auth/wrong-password': 'Passwort ist falsch.',
+      'auth/invalid-credential': 'E-Mail oder Passwort ist falsch.',
+      'auth/user-not-found': 'Kein Konto mit dieser E-Mail gefunden.',
+      'auth/too-many-requests': 'Zu viele Versuche. Bitte kurz warten und nochmal versuchen.'
+    };
+    errorEl.textContent = messages[e.code] || 'Etwas ist schiefgelaufen. Bitte nochmal versuchen.';
+    errorEl.style.display = 'block';
+    submitBtn.disabled = false;
+    submitBtn.textContent = mode === 'login' ? 'Anmelden' : 'Registrieren';
+  }
+}
+window.handleAuthSubmit = handleAuthSubmit;
+
+// Bereits angemeldete Personen direkt weiterleiten, kein doppeltes Anmelden nötig
+onAuthStateChanged(auth, (user) => {
+  if (user) {
+    window.location.href = buildRedirectUrl();
+  }
+});
+
+const params = new URLSearchParams(location.search);
+if (params.get('mode') === 'register') setMode('register');
+</script>
+
+</body>
+</html>
