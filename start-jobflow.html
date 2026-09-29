@@ -250,60 +250,58 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
 .wave-divider .wave-f3 { fill: var(--bg-2); }
 
 
-/* ---------- Website-Vorschau: Fenster kippt auf, wächst, darin scrollt Jobflow ---------- */
-.showcase-head { text-align: center; padding: 110px 0 0; }
-.showcase-head h2 { font-size: clamp(36px, 5.6vw, 68px); font-weight: 800; letter-spacing: -0.045em; max-width: 16ch; margin: 0 auto; }
-.showcase-head p { color: var(--muted); font-size: clamp(17px, 1.6vw, 20px); margin: 16px auto 0; max-width: 42ch; }
-.showcase { position: relative; height: 420vh; }
-.showcase-sticky {
-  position: sticky; top: 0; height: 100vh; height: 100svh; overflow: hidden;
-  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 26px;
-  padding: calc(var(--header-h) * 0.5) 24px 24px;
+/* ---------- Kartenfahrt: Karte kippt auf, Kamera fliegt Ort für Ort ---------- */
+.mapfly-head { text-align: center; padding: 110px 0 0; }
+.mapfly-head h2 { font-size: clamp(34px, 5.2vw, 64px); font-weight: 800; letter-spacing: -0.045em; max-width: 17ch; margin: 0 auto; }
+.mapfly-head p { color: var(--muted); font-size: clamp(17px, 1.6vw, 20px); margin: 16px auto 0; max-width: 42ch; }
+.mapfly { position: relative; height: 560vh; }
+.mapfly-sticky { position: sticky; top: 0; height: 100vh; height: 100svh; overflow: hidden; display: grid; place-items: center; }
+.mapfly-stage {
+  position: relative; width: min(1000px, 94vw, calc((100svh - 5rem) * 1.07)); aspect-ratio: 555 / 520;
+  /* weiche Ränder, damit beim Hineinzoomen keine harte Bildkante sichtbar ist */
+  -webkit-mask-image: radial-gradient(ellipse 72% 72% at 50% 50%, #000 62%, transparent 100%);
+  mask-image: radial-gradient(ellipse 72% 72% at 50% 50%, #000 62%, transparent 100%);
 }
-.device {
-  width: min(1060px, 100%, calc((100svh - 14rem) * 1.6));
-  border-radius: 16px; overflow: hidden; background: #0E0E10; border: 1px solid var(--border-strong);
-  box-shadow: 0 60px 120px -40px rgba(0,0,0,0.95);
-  transform-origin: 50% 40%; will-change: transform;
+.mapfly-plane { width: 100%; height: 100%; transform-origin: 50% 65%; will-change: transform; }
+.mapfly-map, .mapfly-svg { width: 100%; height: 100%; display: block; }
+.mapfly-svg { --zoom-k: 1; }
+.mapfly-svg .ort-region { fill: #141416; stroke: rgba(var(--accent-rgb), 0.55); stroke-width: 1.5; stroke-linejoin: round; vector-effect: non-scaling-stroke; }
+.mapfly-svg .ort-region-label { font-size: calc(12px * var(--zoom-k)); font-family: var(--font); fill: var(--dim); text-anchor: middle; font-weight: 600; }
+.map-pin { cursor: default; outline: none; }
+.map-pin[role="button"] { cursor: pointer; }
+.map-pin-ring { fill: none; stroke: var(--accent); stroke-width: 2; opacity: 0; transform-box: fill-box; transform-origin: center; }
+.map-pin-dot { fill: var(--accent); stroke: var(--bg); stroke-width: 3; transform-box: fill-box; transform-origin: center; transition: transform 0.35s var(--spring); }
+.map-pin.is-empty .map-pin-dot { fill: var(--bg); stroke: var(--accent); stroke-width: 2.5; stroke-dasharray: 4 3; }
+.map-pin-count { font-size: 11px; font-family: var(--font); fill: #0A0A0B; text-anchor: middle; dominant-baseline: central; font-weight: 800; pointer-events: none; }
+.map-pin-label {
+  font-size: 13px; font-family: var(--font); fill: var(--text); text-anchor: middle; font-weight: 700; pointer-events: none;
+  paint-order: stroke; stroke: var(--bg); stroke-width: 4px; stroke-linejoin: round;
 }
-.device-bar { display: flex; align-items: center; gap: 6px; padding: 10px 14px; background: #17171A; border-bottom: 1px solid var(--border); }
-.device-bar i { width: 10px; height: 10px; border-radius: 50%; flex: none; background: #3A3A3F; }
-.device-url {
-  margin-inline: auto; font-size: 12px; color: var(--muted); padding: 4px 14px; border-radius: 6px; background: rgba(255,255,255,0.05);
-  display: inline-flex; align-items: center; gap: 6px;
+.map-pin.is-active .map-pin-dot, .map-pin[role="button"]:hover .map-pin-dot, .map-pin:focus-visible .map-pin-dot { transform: scale(1.35); }
+.map-pin.is-active .map-pin-ring { animation: pin-ring 1.6s ease-out infinite; }
+@keyframes pin-ring { 0% { opacity: 0.8; transform: scale(0.7); } 100% { opacity: 0; transform: scale(2.2); } }
+.mapfly-card {
+  position: absolute; left: max(24px, calc(50% - 560px)); bottom: 40px; width: 330px; z-index: 2;
+  background: #141416; border: 1px solid var(--border-strong); border-radius: 20px; padding: 22px 22px 20px;
+  opacity: 0; transform: translateY(14px); pointer-events: none;
 }
-.device-url svg { width: 11px; height: 11px; }
-.device-screen { position: relative; aspect-ratio: 16 / 10; overflow: hidden; background: var(--bg); }
-.device-page { position: absolute; left: 0; right: 0; top: 0; will-change: transform; padding: 0 0 40px; }
-.showcase-caption {
-  display: flex; align-items: center; justify-content: space-between; gap: 20px; flex-wrap: wrap;
-  width: min(1060px, 100%, calc((100svh - 14rem) * 1.6));
-  opacity: 0; transform: translateY(16px); transition: opacity 0.5s ease, transform 0.6s var(--ease);
+.mapfly-card.is-shown { opacity: 1; transform: none; pointer-events: auto; transition: opacity 0.35s ease, transform 0.45s var(--ease); }
+.mapfly-card h3 { font-size: 28px; letter-spacing: -0.04em; }
+.mapfly-count { color: var(--accent); font-weight: 600; font-size: 15px; margin-top: 4px; }
+.mapfly-card ul { list-style: none; margin: 14px 0 16px; display: grid; gap: 10px; }
+.mapfly-card li { font-size: 14px; color: var(--muted); line-height: 1.35; }
+.mapfly-card li b { display: block; color: var(--text); font-size: 15px; }
+.mapfly-card .btn { margin-top: 14px; }
+.mapfly-card ul + .btn { margin-top: 0; }
+.mapfly-end {
+  position: absolute; left: 0; right: 0; bottom: 44px; z-index: 2; display: flex; flex-direction: column; align-items: center; gap: 14px;
+  opacity: 0; transform: translateY(14px); pointer-events: none; transition: opacity 0.4s ease, transform 0.5s var(--ease);
 }
-.showcase-caption.is-shown { opacity: 1; transform: none; }
-.showcase-caption h3 { font-size: 22px; letter-spacing: -0.03em; }
-.showcase-caption p { color: var(--muted); font-size: 15.5px; margin-top: 4px; max-width: 52ch; }
-
-/* Mini-Jobflow im Fenster */
-.mini-nav { display: flex; align-items: center; justify-content: space-between; padding: 14px 22px; border-bottom: 1px solid var(--border); }
-.mini-brand { font-weight: 800; font-size: 15px; letter-spacing: -0.04em; display: inline-flex; align-items: center; gap: 6px; }
-.mini-brand .surfer-bg { width: 14px; }
-.mini-brand b { color: var(--accent); font-weight: 800; }
-.mini-links { display: flex; gap: 14px; font-size: 11px; color: var(--muted); align-items: center; }
-.mini-links span:last-child { background: var(--accent); color: #0A0A0B; font-weight: 700; padding: 5px 10px; border-radius: 999px; }
-.mini-hero { text-align: center; padding: 44px 20px 30px; }
-.mini-hero strong { display: block; font-size: 30px; font-weight: 800; letter-spacing: -0.045em; line-height: 1.05; max-width: 16ch; margin: 0 auto; }
-.mini-search { margin: 18px auto 0; max-width: 340px; display: flex; align-items: center; justify-content: space-between; padding: 6px 6px 6px 16px; border-radius: 999px; border: 1px solid var(--border-strong); font-size: 11.5px; color: var(--dim); }
-.mini-search span:last-child { background: var(--accent); color: #0A0A0B; font-weight: 700; padding: 5px 12px; border-radius: 999px; }
-.mini-heading { font-size: 20px; font-weight: 800; letter-spacing: -0.04em; text-align: center; margin: 14px 0 16px; }
-.mini-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; padding: 0 22px; }
-.mini-tile { border-radius: 12px; overflow: hidden; background: #141416; border: 1px solid var(--border); }
-.mini-media { height: 62px; display: grid; place-items: center; font-weight: 800; font-size: 20px; color: rgba(255,255,255,0.92); position: relative; }
-.mini-media img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
-.mini-body { padding: 10px 12px 12px; }
-.mini-body b { display: block; font-size: 12.5px; letter-spacing: -0.02em; line-height: 1.2; }
-.mini-body span { display: block; font-size: 10.5px; color: var(--muted); margin-top: 3px; }
-.mini-body em { display: block; font-style: normal; font-size: 10px; color: var(--accent); margin-top: 8px; font-weight: 600; }
+.mapfly-end.is-shown { opacity: 1; transform: none; pointer-events: auto; }
+.mapfly-end p { font-size: 20px; font-weight: 700; letter-spacing: -0.02em; padding: 6px 14px; border-radius: 10px; background: rgba(10,10,11,0.8); }
+.mapfly-dots { position: absolute; top: calc(var(--header-h) + 18px); left: 50%; transform: translateX(-50%); display: flex; gap: 7px; z-index: 2; }
+.mapfly-dots span { width: 7px; height: 7px; border-radius: 999px; background: var(--border-strong); transition: width 0.4s var(--ease), background 0.3s ease; }
+.mapfly-dots span.active { width: 24px; background: var(--accent); }
 
 /* ---------- Anzeigen ---------- */
 .listings { padding: 40px 0 60px; position: relative; }
@@ -538,23 +536,6 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
 .swipe-container { display: none; }
 
 /* Ostfriesland-Karte */
-.ort-map-block { margin-top: 90px; text-align: center; }
-.ort-map-block[hidden] { display: none; }
-.ort-map-block h3 { font-size: clamp(28px, 4vw, 44px); font-weight: 800; letter-spacing: -0.04em; }
-.ort-map-block p { color: var(--muted); margin-top: 10px; }
-.ort-map-wrap { display: none; justify-content: center; margin-top: 30px; }
-.ort-map-wrap.visible { display: flex; }
-.ort-map-svg { width: 100%; max-width: 600px; height: auto; overflow: visible; }
-.ort-region { fill: rgba(255,255,255,0.03); stroke: rgba(var(--accent-rgb), 0.45); stroke-width: 1.5; stroke-linejoin: round; transition: fill 0.3s ease; }
-.ort-region:hover { fill: rgba(var(--accent-rgb), 0.08); }
-.ort-region-label { font-size: 11px; font-family: var(--font); fill: var(--dim); text-anchor: middle; font-weight: 500; }
-.ort-dot-group { cursor: pointer; outline: none; }
-.ort-pin-pulse { fill: var(--accent); opacity: 0.4; transform-box: fill-box; transform-origin: center; animation: pin-pulse 2.4s ease-out infinite; }
-@keyframes pin-pulse { 0% { transform: scale(0.6); opacity: 0.5; } 100% { transform: scale(2.4); opacity: 0; } }
-.ort-pin-head { fill: var(--accent); stroke: #0A0A0B; stroke-width: 2; transition: transform 0.3s var(--spring); transform-box: fill-box; transform-origin: center; }
-.ort-dot-group:hover .ort-pin-head, .ort-dot-group:focus-visible .ort-pin-head { transform: scale(1.25); }
-.ort-pin-count { font-size: 9px; font-family: var(--font); fill: #0A0A0B; text-anchor: middle; dominant-baseline: central; font-weight: 800; pointer-events: none; }
-.ort-pin-label { font-size: 10px; font-family: var(--font); fill: var(--text); text-anchor: middle; font-weight: 600; pointer-events: none; }
 
 /* ---------- Formulare ---------- */
 .form-panel {
@@ -690,20 +671,16 @@ footer { background: var(--bg-2); padding: 30px 0 40px; overflow: hidden; }
   .hero-search .btn { padding: 11px 16px; }
   .scroll-hint { display: none; }
   .wave-divider { height: 60px; }
-  .showcase-head { padding-top: 80px; }
-  .showcase { height: 340vh; }
-  .device { width: min(300px, 78vw, calc((100svh - 13rem) * 0.52)); border-radius: 34px; border-width: 6px; border-color: #26262A; }
-  .device-bar { justify-content: center; padding: 8px 0 6px; background: var(--bg); border-bottom: none; }
-  .device-bar i { display: none; }
-  .device-url { font-size: 10px; background: none; padding: 2px 0; }
-  .device-screen { aspect-ratio: 9 / 17; }
-  .mini-links span:not(:last-child) { display: none; }
-  .mini-hero { padding: 30px 14px 20px; }
-  .mini-hero strong { font-size: 24px; }
-  .mini-grid { grid-template-columns: 1fr; padding: 0 14px; }
-  .showcase-caption { width: min(300px, 78vw); justify-content: center; text-align: center; }
-  .showcase-caption h3 { font-size: 19px; }
-  .showcase-caption p { font-size: 14px; }
+  .mapfly-head { padding-top: 80px; }
+  .mapfly { height: 480vh; }
+  .mapfly-sticky { place-items: start center; padding-top: calc(var(--header-h) + 44px); }
+  .mapfly-stage { width: 100vw; }
+  .mapfly-card { left: 14px; right: 14px; bottom: calc(16px + env(safe-area-inset-bottom)); width: auto; padding: 18px; }
+  .mapfly-card h3 { font-size: 24px; }
+  .mapfly-card ul { margin: 10px 0 12px; gap: 6px; }
+  .mapfly-card li:nth-child(2) { display: none; }
+  .mapfly-end { bottom: calc(24px + env(safe-area-inset-bottom)); }
+  .mapfly-end p { font-size: 17px; }
   .form-panel { padding: 30px 20px; border-radius: 24px; }
   .form-grid { grid-template-columns: 1fr; }
   .tile-grid { grid-template-columns: 1fr; }
@@ -789,10 +766,11 @@ footer { background: var(--bg-2); padding: 30px 0 40px; overflow: hidden; }
   .tile.pre { opacity: 1; transform: none; }
   .marquee-track { animation: none; flex-wrap: wrap; width: auto; justify-content: center; }
   .marquee-group:last-child { display: none; }
-  .showcase { height: auto; }
-  .showcase-sticky { position: static; height: auto; padding: 50px 24px 80px; }
-  .device { transform: none !important; }
-  .showcase-caption { opacity: 1; transform: none; }
+  .mapfly { height: auto; }
+  .mapfly-sticky { position: static; height: auto; display: flex; flex-direction: column; align-items: center; padding: 40px 0 80px; gap: 20px; }
+  .mapfly-plane { transform: none !important; }
+  .mapfly-dots, .mapfly-card { display: none; }
+  .mapfly-end { position: static; opacity: 1; transform: none; pointer-events: auto; }
   .statement { height: auto; }
   .statement-sticky { position: static; height: auto; padding: 100px 0; }
   .js-scroll .statement-text .sw { opacity: 1; }
@@ -875,23 +853,19 @@ footer { background: var(--bg-2); padding: 30px 0 40px; overflow: hidden; }
 
 
 
-<section class="showcase-section" aria-labelledby="showcase-title">
-  <div class="wrap showcase-head">
-    <h2 id="showcase-title">Alle Anzeigen aus der Region auf einen Blick.</h2>
-    <p>Von der Bäckerei in Aurich bis zum Hof in Wittmund – so sieht Jobflow aus.</p>
+<section class="mapfly-section" aria-labelledby="mapfly-title">
+  <div class="wrap mapfly-head">
+    <h2 id="mapfly-title">Was gerade in deiner Gegend gesucht wird.</h2>
+    <p>Scroll einmal quer durch Ostfriesland.</p>
   </div>
-  <div class="showcase" id="showcase">
-    <div class="showcase-sticky">
-      <div class="device" id="device" aria-hidden="true">
-        <div class="device-bar"><i></i><i></i><i></i><span class="device-url"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>Jobflow – Jobs in Ostfriesland</span></div>
-        <div class="device-screen" id="device-screen"><div class="device-page" id="device-page"></div></div>
-      </div>
-      <div class="showcase-caption" id="showcase-caption">
-        <div>
-          <h3>Einfach reinschauen.</h3>
-          <p>Kein Konto nötig zum Suchen. Anmelden musst du dich erst, wenn du selbst eine Anzeige aufgibst.</p>
-        </div>
-        <a href="#anzeigen" class="btn btn-ghost" onclick="scrollToList(); return false;">Zu den Anzeigen</a>
+  <div class="mapfly" id="mapfly">
+    <div class="mapfly-sticky">
+      <div class="mapfly-dots" id="mapfly-dots" aria-hidden="true"></div>
+      <div class="mapfly-stage"><div class="mapfly-plane" id="mapfly-plane"><div class="mapfly-map" id="mapfly-map"></div></div></div>
+      <div class="mapfly-card" id="mapfly-card" aria-live="polite"></div>
+      <div class="mapfly-end" id="mapfly-end">
+        <p id="mapfly-end-text">Ganz Ostfriesland auf einer Karte</p>
+        <a href="#anzeigen" class="btn btn-primary" onclick="scrollToList(); return false;">Anzeigen in deiner Nähe</a>
       </div>
     </div>
   </div>
@@ -1020,11 +994,6 @@ footer { background: var(--bg-2); padding: 30px 0 40px; overflow: hidden; }
     </div>
   </div>
 
-  <div class="ort-map-block" id="ort-map-block" hidden>
-    <h3>Jobs auf der Karte</h3>
-    <p>Tipp auf einen Ort, um nur dessen Anzeigen zu sehen.</p>
-    <div class="ort-map-wrap" id="ort-map-wrap"></div>
-  </div>
 
   </div>
 </section>
@@ -1267,31 +1236,50 @@ const OSTFRIESLAND_ORTE = [
   { name: 'Weener', x: 233, y: 475 }
 ];
 
+/* ---------- Kartenfahrt durch Ostfriesland ----------
+   Die Karte (SVG) liegt zuerst schräg im Raum, richtet sich beim Scrollen auf
+   und eine "Kamera" (die viewBox des SVG) fliegt nacheinander die Orte an.
+   Scroll-Aufteilung: 0–0.14 aufrichten, 0.16–0.86 Orte abfliegen, 0.88–1 herauszoomen. */
+function easeOut(p) { return 1 - Math.pow(1 - p, 3); }
+function easeInOut(p) { return p < 0.5 ? 4 * p * p * p : 1 - Math.pow(-2 * p + 2, 3) / 2; }
+function lerp(a, b, t) { return a + (b - a) * t; }
+
+// Reihenfolge der Flugroute: von den Inseln im Nordwesten Richtung Süden
+const FLIGHT_ROUTE = ['Borkum', 'Juist', 'Norderney', 'Norden', 'Baltrum', 'Langeoog', 'Esens', 'Spiekeroog',
+  'Wittmund', 'Aurich', 'Wiesmoor', 'Emden', 'Leer', 'Weener'];
+const FALLBACK_STOPS = ['Norden', 'Aurich', 'Emden', 'Leer'];
+const MAP_FULL = { cx: 262.5, cy: 320, w: 555 };
+const MAP_RATIO = 520 / 555;
+const STOP_ZOOM_W = 200;
+const MAX_STOPS = 6;
+
+let mapStops = [];
+let mapStopIndex = -2; // -1 = Übersicht am Ende, -2 = noch nichts angezeigt
+let mapPinEls = [];
+let mapSvgEl = null;
+
+function listingsInOrt(ortName) {
+  const needle = ortName.toLowerCase();
+  const jobs = jobsData.concat(EXAMPLE_JOBS).map(item => ({ item, type: 'jobs' }));
+  const gesuche = gesucheData.map(item => ({ item, type: 'gesuche' }));
+  return jobs.concat(gesuche).filter(({ item }) => (item.ort || '').toLowerCase().includes(needle));
+}
+
 function renderOrtMap() {
-  renderShowcase();
-  const wrap = document.getElementById('ort-map-wrap');
-  if (!wrap) return;
+  const svgWrap = document.getElementById('mapfly-map');
+  if (!svgWrap) return;
 
-  const alle = jobsData.concat(gesucheData).concat(EXAMPLE_JOBS);
   const counts = {};
-  alle.forEach(item => {
-    const ort = (item.ort || '').toLowerCase();
-    OSTFRIESLAND_ORTE.forEach(o => {
-      if (ort.includes(o.name.toLowerCase())) {
-        counts[o.name] = (counts[o.name] || 0) + 1;
-      }
-    });
-  });
-
+  OSTFRIESLAND_ORTE.forEach(o => { counts[o.name] = listingsInOrt(o.name).length; });
   const aktiveOrte = OSTFRIESLAND_ORTE.filter(o => counts[o.name]);
-  const block = document.getElementById('ort-map-block');
-  if (block) block.hidden = aktiveOrte.length === 0;
-  if (aktiveOrte.length === 0) {
-    wrap.classList.remove('visible');
-    wrap.innerHTML = '';
-    return;
+
+  // Stopps: Orte mit Anzeigen in Routen-Reihenfolge; bei wenig Daten mit festen Orten auffüllen
+  let stops = FLIGHT_ROUTE.filter(name => counts[name]).slice(0, MAX_STOPS);
+  if (stops.length < 3) {
+    FALLBACK_STOPS.forEach(name => { if (stops.length < 4 && !stops.includes(name)) stops.push(name); });
+    stops.sort((a, b) => FLIGHT_ROUTE.indexOf(a) - FLIGHT_ROUTE.indexOf(b));
   }
-  wrap.classList.add('visible');
+  mapStops = stops.map(name => OSTFRIESLAND_ORTE.find(o => o.name === name));
 
   let regionsSvg = '';
   OSTFRIESLAND_KREISE.forEach(k => {
@@ -1299,24 +1287,167 @@ function renderOrtMap() {
       '<text class="ort-region-label" x="' + k.labelX + '" y="' + k.labelY + '">' + k.name + '</text>';
   });
 
-  let dotsSvg = '';
-  aktiveOrte.forEach(o => {
-    const count = counts[o.name];
-    const r = Math.min(13, 8 + count * 1.2);
+  const pinOrte = OSTFRIESLAND_ORTE.filter(o => counts[o.name] || stops.includes(o.name));
+  let pinsSvg = '';
+  pinOrte.forEach(o => {
+    const count = counts[o.name] || 0;
     const jsName = o.name.replace(/'/g, "\\'");
-    dotsSvg += '<g class="ort-dot-group" tabindex="0" role="button" aria-label="' + count + ' ' + (count === 1 ? 'Anzeige' : 'Anzeigen') + ' in ' + o.name + ' anzeigen" onclick="focusOrtFilter(\'' + jsName + '\')" onkeydown="if(event.key===\'Enter\'||event.key===\' \'){event.preventDefault();focusOrtFilter(\'' + jsName + '\')}">' +
-      '<circle class="ort-pin-pulse" cx="' + o.x + '" cy="' + o.y + '" r="' + r + '"></circle>' +
-      '<circle class="ort-pin-head" cx="' + o.x + '" cy="' + o.y + '" r="' + r + '"></circle>' +
-      '<text class="ort-pin-count" x="' + o.x + '" y="' + o.y + '">' + count + '</text>' +
-      '<text class="ort-pin-label" x="' + o.x + '" y="' + (o.y + r + 13) + '">' + o.name + '</text>' +
+    const label = count ? count + ' ' + (count === 1 ? 'Anzeige' : 'Anzeigen') + ' in ' + o.name + ' anzeigen' : o.name + ': noch keine Anzeigen';
+    pinsSvg += '<g class="map-pin' + (count ? '' : ' is-empty') + '" data-ort="' + o.name + '" transform="translate(' + o.x + ' ' + o.y + ')"' +
+      (count ? ' tabindex="0" role="button" aria-label="' + label + '" onclick="focusOrtFilter(\'' + jsName + '\')" onkeydown="if(event.key===\'Enter\'||event.key===\' \'){event.preventDefault();focusOrtFilter(\'' + jsName + '\')}"' : ' aria-hidden="true"') + '>' +
+      '<circle class="map-pin-ring" r="15"></circle>' +
+      '<circle class="map-pin-dot" r="10"></circle>' +
+      (count ? '<text class="map-pin-count">' + count + '</text>' : '') +
+      '<text class="map-pin-label" y="27">' + o.name + '</text>' +
       '</g>';
   });
 
-  wrap.innerHTML =
-    '<svg class="ort-map-svg" viewBox="-15 60 555 520" role="group" aria-label="Karte: Anzeigen nach Ort in Ostfriesland">' +
-    regionsSvg +
-    dotsSvg +
-    '</svg>';
+  svgWrap.innerHTML = '<svg class="mapfly-svg" id="mapfly-svg" viewBox="-15 60 555 520" preserveAspectRatio="xMidYMid meet" role="group" aria-label="Karte: Anzeigen nach Ort in Ostfriesland">' +
+    regionsSvg + pinsSvg + '</svg>';
+  mapSvgEl = document.getElementById('mapfly-svg');
+  mapPinEls = Array.from(svgWrap.querySelectorAll('.map-pin'));
+
+  const dots = document.getElementById('mapfly-dots');
+  if (dots) dots.innerHTML = mapStops.map(() => '<span></span>').join('');
+
+  const total = jobsData.length + gesucheData.length + EXAMPLE_JOBS.length;
+  const endText = document.getElementById('mapfly-end-text');
+  if (endText) {
+    endText.textContent = aktiveOrte.length
+      ? total + ' ' + (total === 1 ? 'Anzeige' : 'Anzeigen') + ' in ' + aktiveOrte.length + ' ' + (aktiveOrte.length === 1 ? 'Ort' : 'Orten')
+      : 'Ganz Ostfriesland auf einer Karte';
+  }
+
+  mapStopIndex = -2;
+  requestScrollFrame();
+}
+
+function renderMapCard(index) {
+  const card = document.getElementById('mapfly-card');
+  const end = document.getElementById('mapfly-end');
+  if (!card || !end) return;
+  end.classList.toggle('is-shown', index === -1);
+  if (index < 0) {
+    card.classList.remove('is-shown');
+    return;
+  }
+  const ort = mapStops[index];
+  const found = listingsInOrt(ort.name);
+  card.innerHTML = '';
+  const h = document.createElement('h3');
+  h.textContent = ort.name;
+  card.appendChild(h);
+  const sub = document.createElement('p');
+  sub.className = 'mapfly-count';
+  sub.textContent = found.length
+    ? found.length + ' ' + (found.length === 1 ? 'Anzeige' : 'Anzeigen')
+    : 'Hier ist gerade noch nichts ausgeschrieben.';
+  card.appendChild(sub);
+  if (found.length) {
+    const list = document.createElement('ul');
+    found.slice(0, 2).forEach(({ item, type }) => {
+      const li = document.createElement('li');
+      const b = document.createElement('b');
+      b.textContent = type === 'jobs' ? item.titel : 'Sucht: ' + item.art;
+      li.appendChild(b);
+      li.appendChild(document.createTextNode(type === 'jobs' ? item.firma : item.name));
+      list.appendChild(li);
+    });
+    card.appendChild(list);
+  }
+  const btn = document.createElement('button');
+  btn.type = 'button';
+  btn.className = 'btn btn-ghost btn-sm';
+  if (found.length) {
+    btn.textContent = 'Anzeigen in ' + ort.name;
+    btn.addEventListener('click', () => focusOrtFilter(ort.name));
+  } else {
+    btn.textContent = 'Erste Anzeige aufgeben';
+    btn.addEventListener('click', requestForm);
+  }
+  card.appendChild(btn);
+  card.classList.remove('is-shown');
+  void card.offsetWidth;
+  card.classList.add('is-shown');
+
+  document.querySelectorAll('#mapfly-dots span').forEach((d, i) => d.classList.toggle('active', i === index));
+}
+
+function setMapCamera(cam) {
+  const h = cam.w * MAP_RATIO;
+  mapSvgEl.setAttribute('viewBox', (cam.cx - cam.w / 2).toFixed(2) + ' ' + (cam.cy - h / 2).toFixed(2) + ' ' + cam.w.toFixed(2) + ' ' + h.toFixed(2));
+  // Pins und Beschriftung bleiben beim Zoomen gleich groß auf dem Bildschirm
+  const k = cam.w / MAP_FULL.w;
+  mapSvgEl.style.setProperty('--zoom-k', k.toFixed(4));
+  mapPinEls.forEach(pin => {
+    const o = OSTFRIESLAND_ORTE.find(x => x.name === pin.dataset.ort);
+    pin.setAttribute('transform', 'translate(' + o.x + ' ' + o.y + ') scale(' + k.toFixed(4) + ')');
+  });
+}
+
+function updateMapFly() {
+  const section = document.getElementById('mapfly');
+  if (!section || !mapSvgEl || !mapStops.length) return;
+  const r = section.getBoundingClientRect();
+  if (r.bottom < 0 || r.top > window.innerHeight) return;
+  const p = stickyProgress(section);
+  const plane = document.getElementById('mapfly-plane');
+
+  // Phase 1: Karte richtet sich auf und wächst
+  const rise = easeOut(clamp(p / 0.14, 0, 1));
+  // Phase 3: am Ende wieder ganz flach von oben
+  const settle = easeInOut(clamp((p - 0.88) / 0.1, 0, 1));
+  const tilt = lerp(lerp(58, 14, rise), 0, settle);
+  const scale = lerp(0.7, 1, rise);
+  plane.style.transform = 'perspective(1400px) rotateX(' + tilt.toFixed(2) + 'deg) scale(' + scale.toFixed(4) + ')';
+
+  // Phase 2: Kamera fliegt von Ort zu Ort
+  const flight = clamp((p - 0.16) / 0.7, 0, 1);
+  const n = mapStops.length;
+  const stopCam = (i) => ({ cx: mapStops[i].x, cy: mapStops[i].y + 12, w: STOP_ZOOM_W });
+  let cam;
+  let activeIndex;
+  if (p < 0.16) {
+    cam = MAP_FULL;
+    activeIndex = -2;
+  } else if (p >= 0.88) {
+    const last = stopCam(n - 1);
+    const t = easeInOut(clamp((p - 0.88) / 0.1, 0, 1));
+    cam = { cx: lerp(last.cx, MAP_FULL.cx, t), cy: lerp(last.cy, MAP_FULL.cy, t), w: lerp(last.w, MAP_FULL.w, t) };
+    activeIndex = -1;
+  } else {
+    const seg = Math.min(Math.floor(flight * n), n - 1);
+    const local = flight * n - seg;
+    const from = seg === 0 ? MAP_FULL : stopCam(seg - 1);
+    const to = stopCam(seg);
+    // erste 45 % eines Abschnitts fliegen, Rest am Ort verweilen
+    const t = easeInOut(clamp(local / 0.45, 0, 1));
+    // beim Fliegen kurz etwas herauszoomen – wirkt wie ein echter Kameraflug
+    const hop = seg === 0 ? 0 : Math.sin(Math.PI * t) * 90;
+    cam = { cx: lerp(from.cx, to.cx, t), cy: lerp(from.cy, to.cy, t), w: lerp(from.w, to.w, t) + hop };
+    activeIndex = t > 0.7 ? seg : (seg === 0 ? -2 : seg - 1);
+  }
+  setMapCamera(cam);
+
+  const activeName = activeIndex >= 0 ? mapStops[activeIndex].name : null;
+  mapPinEls.forEach(pin => pin.classList.toggle('is-active', pin.dataset.ort === activeName));
+  if (activeIndex !== mapStopIndex) {
+    mapStopIndex = activeIndex;
+    renderMapCard(activeIndex);
+  }
+}
+
+// "Weniger Bewegung": keine Kamerafahrt, sondern die ganze Karte plus Übersicht
+function showStaticMap() {
+  if (!mapSvgEl) return;
+  setMapCamera(MAP_FULL);
+  const plane = document.getElementById('mapfly-plane');
+  if (plane) plane.style.transform = '';
+  mapPinEls.forEach(pin => pin.classList.remove('is-active'));
+  if (mapStopIndex !== -1) {
+    mapStopIndex = -1;
+    renderMapCard(-1);
+  }
 }
 
 function focusOrtFilter(ortName) {
@@ -3199,54 +3330,6 @@ function updateStatement() {
     (y - surfer.offsetHeight + 4).toFixed(1) + 'px,0) rotate(' + tilt.toFixed(1) + 'deg)';
 }
 
-/* ---------- Website-Vorschau (wie bei Julius Webdesign) ---------- */
-function easeOut(p) { return 1 - Math.pow(1 - p, 3); }
-
-function updateShowcase() {
-  const showcase = document.getElementById('showcase');
-  if (!showcase) return;
-  const r = showcase.getBoundingClientRect();
-  if (r.bottom < 0 || r.top > window.innerHeight) return;
-  const device = document.getElementById('device');
-  const screen = document.getElementById('device-screen');
-  const page = document.getElementById('device-page');
-  const p = stickyProgress(showcase);
-  // Phase 1 (0–25 %): Fenster richtet sich auf und wächst
-  const grow = easeOut(clamp(p / 0.25, 0, 1));
-  device.style.transform = 'perspective(1600px) rotateX(' + ((1 - grow) * 22).toFixed(2) + 'deg) scale(' + (0.72 + 0.28 * grow).toFixed(4) + ')';
-  // Phase 2 (28–96 %): Seite scrollt im Fenster nach unten
-  const maxShift = Math.max(page.offsetHeight - screen.offsetHeight, 0);
-  const inner = clamp((p - 0.28) / 0.68, 0, 1);
-  page.style.transform = 'translate3d(0,' + (-maxShift * inner).toFixed(1) + 'px,0)';
-  document.getElementById('showcase-caption').classList.toggle('is-shown', p > 0.18);
-}
-
-// Baut eine kleine, echte Jobflow-Ansicht mit den aktuellen Anzeigen ins Fenster
-function renderShowcase() {
-  const page = document.getElementById('device-page');
-  if (!page) return;
-  const items = jobsData.map(i => [i, 'jobs'])
-    .concat(EXAMPLE_JOBS.map(i => [i, 'jobs']))
-    .concat(gesucheData.map(i => [i, 'gesuche']))
-    .slice(0, 12);
-  let html = '<div class="mini-nav"><span class="mini-brand"><span class="surfer-bg"></span><span>Job<b>flow</b></span></span>' +
-    '<span class="mini-links"><span>Jobangebote</span><span>Jobsuchende</span><span>+ Anzeige</span></span></div>' +
-    '<div class="mini-hero"><strong>Wo Ostfriesland Arbeit und Menschen <span class="accent">zusammenbringt.</span></strong>' +
-    '<div class="mini-search"><span>Welchen Job suchst du?</span><span>Suchen</span></div></div>' +
-    '<div class="mini-heading">Wonach suchst du heute?</div><div class="mini-grid">';
-  items.forEach(([item, type]) => {
-    const seed = (type === 'jobs' ? (item.firma || item.titel) : item.name) || '?';
-    const media = (type === 'jobs' && item.bild)
-      ? '<img src="' + escapeHtml(item.bild) + '" alt="">'
-      : escapeHtml(getInitials(seed));
-    html += '<div class="mini-tile"><div class="mini-media" style="background:' + getAvatarColor(seed) + '">' + media + '</div>' +
-      '<div class="mini-body"><b>' + escapeHtml(itemTitle(item, type)) + '</b><span>' + escapeHtml(itemPlace(item, type)) + '</span>' +
-      '<em>' + escapeHtml(item.art) + ' · ' + escapeHtml(timeAgo(item.erstellt)) + '</em></div></div>';
-  });
-  page.innerHTML = html + '</div>';
-  requestScrollFrame();
-}
-
 /* ---------- Hero: fadet und schrumpft beim Wegscrollen ---------- */
 function updateHero(y, vh) {
   if (y > vh * 1.2) return;
@@ -3279,10 +3362,12 @@ function onScrollFrame() {
 
   updateBackToTop();
   if (!reduceMotionQuery.matches) {
-    updateShowcase();
+    updateMapFly();
     updateHero(y, vh);
     updateWaves(vh);
     updateStatement();
+  } else {
+    showStaticMap();
   }
   scrollTicking = false;
 }
