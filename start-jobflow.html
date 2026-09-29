@@ -164,7 +164,8 @@
   .ort-map-svg { width: 100%; max-width: 560px; height: auto; }
   .ort-region { fill: var(--paper-dim); stroke: var(--accent); stroke-width: 2; stroke-linejoin: round; }
   .ort-region-label { font-size: 11px; font-family: 'Inter', sans-serif; fill: var(--muted); text-anchor: middle; opacity: 0.75; }
-  .ort-dot-group { cursor: pointer; }
+  .ort-dot-group { cursor: pointer; outline: none; }
+  .ort-dot-group:focus-visible .ort-pin-head { stroke: var(--ink); stroke-width: 3; }
   .ort-pin { fill: var(--accent); }
   .ort-pin-head { fill: var(--accent); stroke: var(--ink); stroke-width: 1; }
   .ort-pin-count { font-size: 8px; font-family: 'Inter', sans-serif; fill: #fff; text-anchor: middle; dominant-baseline: central; font-weight: 600; }
@@ -334,12 +335,21 @@
   .btn-delete-cancel:hover { border-color: var(--muted); }
   .delete-link:hover { color: #A8402B; }
   .report-status { font-size: 13px; color: var(--muted); }
-  .toggle-hint { font-size: 13px; color: var(--muted); margin-top: 4px; }
+  .toggle-hint {
+    font-size: 13px; color: var(--muted); margin-top: 4px; background: none; border: none;
+    font-family: 'Inter', sans-serif; cursor: pointer; padding: 2px 4px;
+  }
+  .toggle-hint:hover { color: var(--accent); }
   .toggle-hint .chev { display: inline-block; transition: transform 0.2s ease; margin-left: 4px; }
   .listing-card.expanded .toggle-hint .chev { transform: rotate(180deg); }
 
   .empty { color: var(--muted); font-size: 16px; padding: 60px 0; text-align: center; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
   .loading { color: var(--muted); font-size: 15px; padding: 40px 0; }
+  .load-error {
+    display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 14px;
+    border: 1px solid var(--accent); border-radius: 14px; padding: 18px 22px; margin-bottom: 16px;
+    color: var(--ink); font-size: 15px; text-align: center;
+  }
   .skeleton-card {
     border: 1px solid var(--line); border-radius: 14px; background: var(--paper-dim);
     padding: 26px 28px; margin-bottom: 16px; display: flex; flex-direction: column; align-items: center; gap: 10px;
@@ -474,7 +484,7 @@
 
 .pitch-section { position: relative; height: 260vh; }
 .pitch-sticky {
-  position: sticky; top: 0; height: 100vh;
+  position: sticky; top: 0; height: 100vh; height: 100svh;
   display: flex; overflow: hidden;
 }
 .pitch-viewport { width: 100%; height: 100%; overflow: hidden; position: relative; }
@@ -575,21 +585,11 @@
   .swipe-progress-bar { height: 100%; background: var(--accent); border-radius: 4px; transition: width 0.25s ease; width: 0%; }
   .swipe-progress-text { font-size: 13px; color: var(--muted); text-align: center; }
 }
-
-.reveal {
-  opacity: 0; transition: opacity 0.7s ease, transform 0.7s ease;
-}
-.reveal.from-left { transform: translateX(-48px); }
-.reveal.from-right { transform: translateX(48px); }
-.reveal.in-view { opacity: 1; transform: translateX(0); }
-@media (prefers-reduced-motion: reduce) {
-  .reveal { opacity: 1 !important; transform: none !important; transition: none !important; }
-}
 </style>
 </head>
 <body>
 
-<div id="dynamic-island" class="dynamic-island">
+<div id="dynamic-island" class="dynamic-island" role="status" aria-live="polite">
   <span class="island-icon" id="island-icon"></span>
   <span class="island-text" id="island-text"></span>
   <button type="button" class="island-action" id="island-action" style="display:none;"></button>
@@ -604,11 +604,11 @@
 <nav class="top">
   <div class="wrap">
     <div class="menu-wrap">
-      <button class="menu-btn" onclick="toggleMenu()" aria-label="Menü öffnen" aria-expanded="false" id="menu-btn">
+      <button class="menu-btn" onclick="toggleMenu()" aria-label="Menü öffnen" aria-expanded="false" aria-controls="menu-dropdown" id="menu-btn">
         <span></span><span></span><span></span>
       </button>
       <span class="menu-greeting" id="menu-greeting" style="display:none;"></span>
-      <div class="menu-dropdown" id="menu-dropdown">
+      <div class="menu-dropdown" id="menu-dropdown" aria-label="Hauptmenü">
         <a href="#" onclick="switchTab('jobs'); scrollToList(); closeMenu(); return false;"><span class="menu-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="M3 12h18"/></svg></span>Jobangebote</a>
         <a href="#" onclick="switchTab('gesuche'); scrollToList(); closeMenu(); return false;"><span class="menu-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8" r="3.5"/><path d="M5 20c0-3.5 3-6 7-6s7 2.5 7 6"/></svg></span>Jobsuchende</a>
         <a href="#" onclick="requestForm(); closeMenu(); return false;"><span class="menu-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 5v14M5 12h14"/></svg></span>Anzeige aufgeben</a>
@@ -638,7 +638,7 @@
     <h1>Wo Ostfriesland Arbeit und Menschen zusammenbringt.</h1>
     <form class="hero-search" onsubmit="handleHeroSearch(event)">
       <span class="hero-search-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4.5-4.5"/></svg></span>
-      <input type="text" id="hero-search-input" placeholder="Welchen Job Suchst du?">
+      <input type="search" id="hero-search-input" placeholder="Welchen Job suchst du?" aria-label="Jobs durchsuchen">
       <button type="submit" class="hero-search-btn">Suchen</button>
     </form>
     <div class="hero-stat" id="hero-stat"></div>
@@ -740,10 +740,10 @@
   <h2 class="listings-heading">Wonach suchst du heute<span class="accent" id="heading-name-part"></span><span class="accent">?</span></h2>
   <div class="section-top">
     <div class="tabs-inline">
-      <button class="tab-btn active" id="tab-jobs" onclick="switchTab('jobs')">Jobangebote</button>
-      <button class="tab-btn" id="tab-gesuche" onclick="switchTab('gesuche')">Jobsuchende</button>
+      <button class="tab-btn active" id="tab-jobs" aria-pressed="true" onclick="switchTab('jobs')">Jobangebote</button>
+      <button class="tab-btn" id="tab-gesuche" aria-pressed="false" onclick="switchTab('gesuche')">Jobsuchende</button>
     </div>
-    <div class="count" id="list-count"></div>
+    <div class="count" id="list-count" aria-live="polite"></div>
   </div>
 
   <div class="toolbar">
@@ -751,8 +751,8 @@
   </div>
 
   <div class="view-toggle" id="view-toggle">
-    <button type="button" class="view-toggle-btn active" id="view-list-btn" onclick="setViewMode('list')">Liste</button>
-    <button type="button" class="view-toggle-btn" id="view-swipe-btn" onclick="setViewMode('swipe')">Durchstöbern</button>
+    <button type="button" class="view-toggle-btn active" id="view-list-btn" aria-pressed="true" onclick="setViewMode('list')">Liste</button>
+    <button type="button" class="view-toggle-btn" id="view-swipe-btn" aria-pressed="false" onclick="setViewMode('swipe')">Durchstöbern</button>
   </div>
 
   <div id="list-container"></div>
@@ -791,7 +791,7 @@
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-app.js";
 import {
-  getFirestore, collection, addDoc, getDocs, query, orderBy, deleteDoc, doc,
+  getFirestore, collection, addDoc, getDocs, query, where, orderBy, deleteDoc, doc,
   getDoc, setDoc, arrayUnion, arrayRemove
 } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-firestore.js";
 import {
@@ -887,26 +887,54 @@ const EXAMPLE_JOBS = [
 ];
 
 function toggleMenu() {
-  document.getElementById('menu-btn').classList.toggle('open');
-  document.getElementById('menu-dropdown').classList.toggle('open');
+  const btn = document.getElementById('menu-btn');
+  const isOpen = document.getElementById('menu-dropdown').classList.toggle('open');
+  btn.classList.toggle('open', isOpen);
+  btn.setAttribute('aria-expanded', String(isOpen));
+  btn.setAttribute('aria-label', isOpen ? 'Menü schließen' : 'Menü öffnen');
 }
 
 function closeMenu() {
-  document.getElementById('menu-btn').classList.remove('open');
+  const btn = document.getElementById('menu-btn');
+  btn.classList.remove('open');
+  btn.setAttribute('aria-expanded', 'false');
+  btn.setAttribute('aria-label', 'Menü öffnen');
   document.getElementById('menu-dropdown').classList.remove('open');
 }
+
+function closeFilterPanels(exceptWrap) {
+  document.querySelectorAll('.multi-filter').forEach((wrap) => {
+    if (wrap === exceptWrap) return;
+    const panel = wrap.querySelector('.multi-filter-panel');
+    const btn = wrap.querySelector('.multi-filter-btn');
+    if (panel) panel.classList.remove('open');
+    if (btn) {
+      btn.classList.remove('active');
+      btn.setAttribute('aria-expanded', 'false');
+    }
+  });
+}
+
+document.addEventListener('keydown', function (e) {
+  if (e.key !== 'Escape') return;
+  const menuDropdown = document.getElementById('menu-dropdown');
+  if (menuDropdown.classList.contains('open')) {
+    closeMenu();
+    document.getElementById('menu-btn').focus();
+    return;
+  }
+  const openPanel = document.querySelector('.multi-filter-panel.open');
+  if (openPanel) {
+    const btn = openPanel.parentElement.querySelector('.multi-filter-btn');
+    closeFilterPanels(null);
+    if (btn) btn.focus();
+  }
+});
 
 document.addEventListener('click', function(e) {
   const menuWrap = document.querySelector('.menu-wrap');
   if (menuWrap && !menuWrap.contains(e.target)) closeMenu();
-  document.querySelectorAll('.multi-filter').forEach((wrap) => {
-    if (!wrap.contains(e.target)) {
-      const panel = wrap.querySelector('.multi-filter-panel');
-      const btn = wrap.querySelector('.multi-filter-btn');
-      if (panel) panel.classList.remove('open');
-      if (btn) btn.classList.remove('active');
-    }
-  });
+  closeFilterPanels(e.target.closest ? e.target.closest('.multi-filter') : null);
 });
 
 const OSTFRIESLAND_KREISE = [
@@ -968,7 +996,8 @@ function renderOrtMap() {
     const scale = Math.min(1.6, 0.9 + count * 0.15);
     const r = 7 * scale;
     const headY = o.y - r * 2.1;
-    dotsSvg += '<g class="ort-dot-group" onclick="focusOrtFilter(\'' + o.name.replace(/'/g, "\\'") + '\')">' +
+    const jsName = o.name.replace(/'/g, "\\'");
+    dotsSvg += '<g class="ort-dot-group" tabindex="0" role="button" aria-label="' + count + ' ' + (count === 1 ? 'Anzeige' : 'Anzeigen') + ' in ' + o.name + ' anzeigen" onclick="focusOrtFilter(\'' + jsName + '\')" onkeydown="if(event.key===\'Enter\'||event.key===\' \'){event.preventDefault();focusOrtFilter(\'' + jsName + '\')}">' +
       '<polygon class="ort-pin" points="' + (o.x - r * 0.42) + ',' + (headY + r * 0.75) + ' ' + (o.x + r * 0.42) + ',' + (headY + r * 0.75) + ' ' + o.x + ',' + o.y + '"></polygon>' +
       '<circle class="ort-pin-head" cx="' + o.x + '" cy="' + headY + '" r="' + r + '"></circle>' +
       '<text class="ort-pin-count" x="' + o.x + '" y="' + headY + '">' + count + '</text>' +
@@ -977,7 +1006,7 @@ function renderOrtMap() {
   });
 
   wrap.innerHTML =
-    '<svg class="ort-map-svg" viewBox="-15 60 555 520">' +
+    '<svg class="ort-map-svg" viewBox="-15 60 555 520" role="group" aria-label="Karte: Anzeigen nach Ort in Ostfriesland">' +
     regionsSvg +
     dotsSvg +
     '</svg>';
@@ -1015,10 +1044,17 @@ function handleHeroSearch(event) {
   }
 }
 
-function switchTab(tab) {
+function setActiveTab(tab) {
   currentTab = tab;
-  document.getElementById('tab-jobs').classList.toggle('active', tab === 'jobs');
-  document.getElementById('tab-gesuche').classList.toggle('active', tab === 'gesuche');
+  ['jobs', 'gesuche'].forEach(t => {
+    const btn = document.getElementById('tab-' + t);
+    btn.classList.toggle('active', t === tab);
+    btn.setAttribute('aria-pressed', String(t === tab));
+  });
+}
+
+function switchTab(tab) {
+  setActiveTab(tab);
   document.getElementById('form-jobs').classList.remove('open');
   document.getElementById('form-gesuche').classList.remove('open');
   const ortInput = document.getElementById('filter-ort');
@@ -1033,31 +1069,41 @@ function toggleForm() {
   if (el.classList.contains('open')) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
+const FORM_FIELDS = {
+  jobs: ['j-firma', 'j-titel', 'j-ort', 'j-frist', 'j-beschreibung', 'j-email'],
+  gesuche: ['g-name', 'g-ort', 'g-verfuegbarkeit', 'g-beschreibung', 'g-email']
+};
+
+function clearForm(type) {
+  FORM_FIELDS[type].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.value = '';
+  });
+  const prefix = type === 'jobs' ? 'j' : 'g';
+  const count = document.getElementById(prefix + '-char-count');
+  if (count) count.textContent = '0 Zeichen';
+  if (type === 'jobs') removeImage();
+  document.getElementById('form-' + type).classList.remove('open');
+}
+
+function showFormError(errorEl, text) {
+  errorEl.textContent = text;
+  errorEl.style.display = 'block';
+}
+
+function isValidEmail(email) {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+}
+
 function cancelForm(type) {
-  const fieldIds = type === 'jobs'
-    ? ['j-firma', 'j-titel', 'j-ort', 'j-frist', 'j-beschreibung', 'j-email']
-    : ['g-name', 'g-ort', 'g-verfuegbarkeit', 'g-beschreibung', 'g-email'];
-  const hasData = fieldIds.some(id => {
+  const hasData = FORM_FIELDS[type].some(id => {
     const el = document.getElementById(id);
     return el && el.value.trim() !== '';
   });
   if (hasData && !window.confirm('Wirklich verwerfen? Deine Eingaben gehen dabei verloren.')) {
     return;
   }
-  fieldIds.forEach(id => {
-    const el = document.getElementById(id);
-    if (el) el.value = '';
-  });
-  if (type === 'jobs') {
-    removeImage();
-    const jCount = document.getElementById('j-char-count');
-    if (jCount) jCount.textContent = '0 Zeichen';
-    document.getElementById('form-jobs').classList.remove('open');
-  } else {
-    const gCount = document.getElementById('g-char-count');
-    if (gCount) gCount.textContent = '0 Zeichen';
-    document.getElementById('form-gesuche').classList.remove('open');
-  }
+  clearForm(type);
 }
 
 
@@ -1071,9 +1117,7 @@ function requestForm() {
 
 function duplicateListing(item, type) {
   if (!currentUser) return;
-  currentTab = type;
-  document.getElementById('tab-jobs').classList.toggle('active', type === 'jobs');
-  document.getElementById('tab-gesuche').classList.toggle('active', type === 'gesuche');
+  setActiveTab(type);
 
   if (type === 'jobs') {
     document.getElementById('j-firma').value = item.firma || '';
@@ -1197,9 +1241,7 @@ function handlePostLoginRedirect() {
   history.replaceState({}, '', url);
 
   if (openForm === 'jobs' || openForm === 'gesuche') {
-    currentTab = openForm;
-    document.getElementById('tab-jobs').classList.toggle('active', currentTab === 'jobs');
-    document.getElementById('tab-gesuche').classList.toggle('active', currentTab === 'gesuche');
+    setActiveTab(openForm);
     setTimeout(() => toggleForm(), 300);
   }
 }
@@ -1265,8 +1307,14 @@ function setViewMode(mode) {
   const swipeBtn = document.getElementById('view-swipe-btn');
   const listContainer = document.getElementById('list-container');
   const swipeContainer = document.getElementById('swipe-container');
-  if (listBtn) listBtn.classList.toggle('active', mode === 'list');
-  if (swipeBtn) swipeBtn.classList.toggle('active', mode === 'swipe');
+  if (listBtn) {
+    listBtn.classList.toggle('active', mode === 'list');
+    listBtn.setAttribute('aria-pressed', String(mode === 'list'));
+  }
+  if (swipeBtn) {
+    swipeBtn.classList.toggle('active', mode === 'swipe');
+    swipeBtn.setAttribute('aria-pressed', String(mode === 'swipe'));
+  }
   if (listContainer) listContainer.classList.toggle('swipe-hidden', mode === 'swipe');
   if (swipeContainer) swipeContainer.classList.toggle('open', mode === 'swipe');
 
@@ -1548,8 +1596,7 @@ function removeImage() {
 async function submitJob() {
   const errorEl = document.getElementById('j-error');
   if (!currentUser) {
-    errorEl.textContent = 'Bitte zuerst anmelden, um eine Anzeige aufzugeben.';
-    errorEl.style.display = 'block';
+    showFormError(errorEl, 'Bitte zuerst anmelden, um eine Anzeige aufzugeben.');
     return;
   }
   const firma = document.getElementById('j-firma').value.trim();
@@ -1561,13 +1608,11 @@ async function submitJob() {
   const email = document.getElementById('j-email').value.trim();
 
   if (!firma || !titel || !ort || !email) {
-    errorEl.textContent = 'Bitte Unternehmen, Jobtitel, Ort und E-Mail ausfüllen.';
-    errorEl.style.display = 'block';
+    showFormError(errorEl, 'Bitte Unternehmen, Jobtitel, Ort und E-Mail ausfüllen.');
     return;
   }
-  if (!email.includes('@') || !email.includes('.')) {
-    errorEl.textContent = 'Bitte eine gültige E-Mail-Adresse angeben.';
-    errorEl.style.display = 'block';
+  if (!isValidEmail(email)) {
+    showFormError(errorEl, 'Bitte eine gültige E-Mail-Adresse angeben.');
     return;
   }
   errorEl.style.display = 'none';
@@ -1578,15 +1623,7 @@ async function submitJob() {
 
   try {
     await addDoc(collection(db, 'jobs'), data);
-    document.getElementById('j-firma').value = '';
-    document.getElementById('j-titel').value = '';
-    document.getElementById('j-ort').value = '';
-    document.getElementById('j-frist').value = '';
-    document.getElementById('j-beschreibung').value = '';
-    document.getElementById('j-char-count').textContent = '0 Zeichen';
-    document.getElementById('j-email').value = '';
-    removeImage();
-    document.getElementById('form-jobs').classList.remove('open');
+    clearForm('jobs');
     await loadJobs();
     renderList();
     updateHeroStat();
@@ -1594,16 +1631,14 @@ async function submitJob() {
     showIsland(ICONS.check, 'Anzeige veröffentlicht', { onClick: scrollToList });
   } catch (e) {
     hideIsland();
-    errorEl.textContent = 'Anzeige konnte nicht gespeichert werden. Bitte nochmal versuchen.';
-    errorEl.style.display = 'block';
+    showFormError(errorEl, 'Anzeige konnte nicht gespeichert werden. Bitte nochmal versuchen.');
   }
 }
 
 async function submitGesuch() {
   const errorEl = document.getElementById('g-error');
   if (!currentUser) {
-    errorEl.textContent = 'Bitte zuerst anmelden, um ein Gesuch aufzugeben.';
-    errorEl.style.display = 'block';
+    showFormError(errorEl, 'Bitte zuerst anmelden, um ein Gesuch aufzugeben.');
     return;
   }
   const name = document.getElementById('g-name').value.trim();
@@ -1614,13 +1649,11 @@ async function submitGesuch() {
   const email = document.getElementById('g-email').value.trim();
 
   if (!name || !ort || !email) {
-    errorEl.textContent = 'Bitte Name, Ort und E-Mail ausfüllen.';
-    errorEl.style.display = 'block';
+    showFormError(errorEl, 'Bitte Name, Ort und E-Mail ausfüllen.');
     return;
   }
-  if (!email.includes('@') || !email.includes('.')) {
-    errorEl.textContent = 'Bitte eine gültige E-Mail-Adresse angeben.';
-    errorEl.style.display = 'block';
+  if (!isValidEmail(email)) {
+    showFormError(errorEl, 'Bitte eine gültige E-Mail-Adresse angeben.');
     return;
   }
   errorEl.style.display = 'none';
@@ -1631,13 +1664,7 @@ async function submitGesuch() {
 
   try {
     await addDoc(collection(db, 'gesuche'), data);
-    document.getElementById('g-name').value = '';
-    document.getElementById('g-ort').value = '';
-    document.getElementById('g-verfuegbarkeit').value = '';
-    document.getElementById('g-beschreibung').value = '';
-    document.getElementById('g-char-count').textContent = '0 Zeichen';
-    document.getElementById('g-email').value = '';
-    document.getElementById('form-gesuche').classList.remove('open');
+    clearForm('gesuche');
     await loadGesuche();
     renderList();
     updateHeroStat();
@@ -1645,43 +1672,44 @@ async function submitGesuch() {
     showIsland(ICONS.check, 'Gesuch veröffentlicht', { onClick: scrollToList });
   } catch (e) {
     hideIsland();
-    errorEl.textContent = 'Gesuch konnte nicht gespeichert werden. Bitte nochmal versuchen.';
-    errorEl.style.display = 'block';
+    showFormError(errorEl, 'Gesuch konnte nicht gespeichert werden. Bitte nochmal versuchen.');
   }
 }
 
 const MAX_ALTER_MS = 30 * 24 * 60 * 60 * 1000;
 
-async function loadJobs() {
+const loadFailed = { jobs: false, gesuche: false };
+
+// Lädt nur Anzeigen der letzten 30 Tage (Filter direkt in Firestore statt im Browser)
+async function loadCollection(name) {
+  const grenze = Date.now() - MAX_ALTER_MS;
   try {
-    const q = query(collection(db, 'jobs'), orderBy('erstellt', 'desc'));
+    const q = query(collection(db, name), where('erstellt', '>=', grenze), orderBy('erstellt', 'desc'));
     const snap = await getDocs(q);
     const items = [];
-    const grenze = Date.now() - MAX_ALTER_MS;
-    snap.forEach(docSnap => {
-      const data = { id: docSnap.id, ...docSnap.data() };
-      if (data.erstellt >= grenze) items.push(data);
-    });
-    jobsData = items;
+    snap.forEach(docSnap => items.push({ id: docSnap.id, ...docSnap.data() }));
+    loadFailed[name] = false;
+    return items;
   } catch (e) {
-    jobsData = [];
+    loadFailed[name] = true;
+    return [];
   }
 }
 
+async function loadJobs() {
+  jobsData = await loadCollection('jobs');
+}
+
 async function loadGesuche() {
-  try {
-    const q = query(collection(db, 'gesuche'), orderBy('erstellt', 'desc'));
-    const snap = await getDocs(q);
-    const items = [];
-    const grenze = Date.now() - MAX_ALTER_MS;
-    snap.forEach(docSnap => {
-      const data = { id: docSnap.id, ...docSnap.data() };
-      if (data.erstellt >= grenze) items.push(data);
-    });
-    gesucheData = items;
-  } catch (e) {
-    gesucheData = [];
-  }
+  gesucheData = await loadCollection('gesuche');
+}
+
+async function retryLoad() {
+  document.getElementById('list-container').innerHTML = renderSkeletons();
+  await Promise.all([loadJobs(), loadGesuche()]);
+  renderList();
+  updateHeroStat();
+  renderOrtMap();
 }
 
 const AVATAR_COLORS = ['#E07B39', '#4A5D5A', '#8A6D3B', '#5C4A72', '#3B6E71', '#6E4A4A'];
@@ -1778,59 +1806,82 @@ function resetAllFilters() {
   renderList();
 }
 
-function renderFilters() {
-  const row = document.getElementById('filter-row');
-  const prevOrtInput = document.getElementById('filter-ort');
-  const prevOrtValue = prevOrtInput ? prevOrtInput.value : '';
-  row.innerHTML = '';
-
-  const artWrap = document.createElement('div');
-  artWrap.className = 'multi-filter';
-  const artBtn = document.createElement('button');
-  artBtn.type = 'button';
-  artBtn.id = 'filter-art-btn';
-  artBtn.className = 'multi-filter-btn';
-  artBtn.textContent = selectedArten.length ? selectedArten.length + ' Job-Art' + (selectedArten.length === 1 ? '' : 'en') : 'Alle Job-Arten';
-  const artPanel = document.createElement('div');
-  artPanel.className = 'multi-filter-panel';
-  artPanel.id = 'filter-art-panel';
-  JOB_ARTEN.forEach(a => {
+function buildDropdownFilter(cfg) {
+  const wrap = document.createElement('div');
+  wrap.className = 'multi-filter';
+  const btn = document.createElement('button');
+  btn.type = 'button';
+  btn.id = 'filter-' + cfg.id + '-btn';
+  btn.className = 'multi-filter-btn';
+  btn.textContent = cfg.label;
+  btn.setAttribute('aria-expanded', 'false');
+  btn.setAttribute('aria-controls', 'filter-' + cfg.id + '-panel');
+  const panel = document.createElement('div');
+  panel.className = 'multi-filter-panel';
+  panel.id = 'filter-' + cfg.id + '-panel';
+  const setOpen = (open) => {
+    panel.classList.toggle('open', open);
+    btn.classList.toggle('active', open);
+    btn.setAttribute('aria-expanded', String(open));
+  };
+  cfg.options.forEach(opt => {
     const optLabel = document.createElement('label');
     optLabel.className = 'multi-filter-option';
-    const cb = document.createElement('input');
-    cb.type = 'checkbox';
-    cb.className = 'toggle-input';
-    cb.value = a;
-    cb.checked = selectedArten.includes(a);
-    cb.addEventListener('change', () => {
-      if (cb.checked) {
-        if (!selectedArten.includes(a)) selectedArten.push(a);
-      } else {
-        selectedArten = selectedArten.filter(x => x !== a);
-      }
-      artBtn.textContent = selectedArten.length ? selectedArten.length + ' Job-Art' + (selectedArten.length === 1 ? '' : 'en') : 'Alle Job-Arten';
-      renderList();
-      const countText = document.getElementById('list-count').textContent;
-      showIsland(ICONS.search, countText);
+    const input = document.createElement('input');
+    input.type = cfg.inputType;
+    input.className = 'toggle-input';
+    if (cfg.inputType === 'radio') input.name = 'filter-' + cfg.id;
+    input.value = opt.value;
+    input.checked = opt.checked;
+    input.addEventListener('change', () => {
+      cfg.onChange(opt, input.checked, btn);
+      if (cfg.closeOnChange) setOpen(false);
     });
     const toggleVisual = document.createElement('span');
     toggleVisual.className = 'toggle-visual';
     const toggleKnob = document.createElement('span');
     toggleKnob.className = 'toggle-knob';
     toggleVisual.appendChild(toggleKnob);
-    optLabel.appendChild(cb);
+    optLabel.appendChild(input);
     optLabel.appendChild(toggleVisual);
-    optLabel.appendChild(document.createTextNode(a));
-    artPanel.appendChild(optLabel);
+    optLabel.appendChild(document.createTextNode(opt.label));
+    panel.appendChild(optLabel);
   });
-  artBtn.addEventListener('click', (e) => {
+  btn.addEventListener('click', (e) => {
     e.stopPropagation();
-    artPanel.classList.toggle('open');
-    artBtn.classList.toggle('active', artPanel.classList.contains('open'));
+    closeFilterPanels(wrap);
+    setOpen(!panel.classList.contains('open'));
   });
-  artWrap.appendChild(artBtn);
-  artWrap.appendChild(artPanel);
-  row.appendChild(artWrap);
+  wrap.appendChild(btn);
+  wrap.appendChild(panel);
+  return wrap;
+}
+
+function renderFilters() {
+  const row = document.getElementById('filter-row');
+  const prevOrtInput = document.getElementById('filter-ort');
+  const prevOrtValue = prevOrtInput ? prevOrtInput.value : '';
+  row.innerHTML = '';
+
+  const artenLabel = () => selectedArten.length
+    ? selectedArten.length + ' Job-Art' + (selectedArten.length === 1 ? '' : 'en')
+    : 'Alle Job-Arten';
+  row.appendChild(buildDropdownFilter({
+    id: 'art',
+    inputType: 'checkbox',
+    label: artenLabel(),
+    options: JOB_ARTEN.map(a => ({ value: a, label: a, checked: selectedArten.includes(a) })),
+    onChange: (opt, checked, btn) => {
+      if (checked) {
+        if (!selectedArten.includes(opt.value)) selectedArten.push(opt.value);
+      } else {
+        selectedArten = selectedArten.filter(x => x !== opt.value);
+      }
+      btn.textContent = artenLabel();
+      renderList();
+      showIsland(ICONS.search, document.getElementById('list-count').textContent);
+    }
+  }));
 
   const ortInput = document.createElement('input');
   ortInput.type = 'text';
@@ -1857,56 +1908,25 @@ function renderFilters() {
     { value: 'aelteste', label: 'Älteste zuerst' },
     { value: 'ort', label: 'Ort A–Z' }
   ];
-  const sortWrap = document.createElement('div');
-  sortWrap.className = 'multi-filter';
-  const sortBtn = document.createElement('button');
-  sortBtn.type = 'button';
-  sortBtn.id = 'filter-sort-btn';
-  sortBtn.className = 'multi-filter-btn';
-  sortBtn.textContent = sortOptions.find(o => o.value === selectedSort).label;
-  const sortPanel = document.createElement('div');
-  sortPanel.className = 'multi-filter-panel';
-  sortPanel.id = 'filter-sort-panel';
-  sortOptions.forEach(o => {
-    const optLabel = document.createElement('label');
-    optLabel.className = 'multi-filter-option';
-    const radio = document.createElement('input');
-    radio.type = 'radio';
-    radio.className = 'toggle-input';
-    radio.name = 'sort-option';
-    radio.value = o.value;
-    radio.checked = selectedSort === o.value;
-    radio.addEventListener('change', () => {
-      selectedSort = o.value;
-      sortBtn.textContent = o.label;
-      sortPanel.classList.remove('open');
-      sortBtn.classList.remove('active');
+  row.appendChild(buildDropdownFilter({
+    id: 'sort',
+    inputType: 'radio',
+    label: sortOptions.find(o => o.value === selectedSort).label,
+    options: sortOptions.map(o => ({ value: o.value, label: o.label, checked: selectedSort === o.value })),
+    closeOnChange: true,
+    onChange: (opt, checked, btn) => {
+      selectedSort = opt.value;
+      btn.textContent = opt.label;
       renderList();
-    });
-    const toggleVisual = document.createElement('span');
-    toggleVisual.className = 'toggle-visual';
-    const toggleKnob = document.createElement('span');
-    toggleKnob.className = 'toggle-knob';
-    toggleVisual.appendChild(toggleKnob);
-    optLabel.appendChild(radio);
-    optLabel.appendChild(toggleVisual);
-    optLabel.appendChild(document.createTextNode(o.label));
-    sortPanel.appendChild(optLabel);
-  });
-  sortBtn.addEventListener('click', (e) => {
-    e.stopPropagation();
-    sortPanel.classList.toggle('open');
-    sortBtn.classList.toggle('active', sortPanel.classList.contains('open'));
-  });
-  sortWrap.appendChild(sortBtn);
-  sortWrap.appendChild(sortPanel);
-  row.appendChild(sortWrap);
+    }
+  }));
 
   if (currentUser) {
     const savedBtn = document.createElement('button');
     savedBtn.type = 'button';
     savedBtn.id = 'filter-saved-btn';
     savedBtn.className = 'meta-action' + (showingSaved ? ' saved-active' : '');
+    savedBtn.setAttribute('aria-pressed', String(showingSaved));
     savedBtn.innerHTML = '<span class="meta-icon">' + ICONS.heartOutline + '</span><span>Nur Gemerkte</span>';
     savedBtn.addEventListener('click', () => {
       showingSaved = !showingSaved;
@@ -1948,6 +1968,15 @@ function getFilteredData() {
   return { filtered, ortFilter };
 }
 
+function setCardExpanded(card, isOpen) {
+  card.classList.toggle('expanded', isOpen);
+  const hint = card.querySelector('.toggle-hint');
+  if (hint) {
+    hint.setAttribute('aria-expanded', String(isOpen));
+    hint.firstChild.textContent = isOpen ? 'Details ausblenden ' : 'Details anzeigen ';
+  }
+}
+
 function renderList() {
   const container = document.getElementById('list-container');
   const { filtered, ortFilter } = getFilteredData();
@@ -1955,6 +1984,24 @@ function renderList() {
   document.getElementById('list-count').textContent = filtered.length + (filtered.length === 1 ? ' Anzeige' : ' Anzeigen');
 
   container.innerHTML = '';
+  if (loadFailed[currentTab]) {
+    const errorBox = document.createElement('div');
+    errorBox.className = 'load-error';
+    errorBox.setAttribute('role', 'alert');
+    const msg = document.createElement('span');
+    msg.textContent = navigator.onLine === false
+      ? 'Keine Internetverbindung – aktuelle Anzeigen konnten nicht geladen werden.'
+      : 'Aktuelle Anzeigen konnten gerade nicht geladen werden.';
+    errorBox.appendChild(msg);
+    const retryBtn = document.createElement('button');
+    retryBtn.type = 'button';
+    retryBtn.className = 'btn btn-ghost';
+    retryBtn.textContent = 'Nochmal versuchen';
+    retryBtn.addEventListener('click', retryLoad);
+    errorBox.appendChild(retryBtn);
+    container.appendChild(errorBox);
+    if (filtered.length === 0) return;
+  }
   if (filtered.length === 0) {
     const filtersActive = selectedArten.length || ortFilter || heroSearchTerm || showingSaved;
     const empty = document.createElement('div');
@@ -1982,9 +2029,6 @@ function renderList() {
   filtered.forEach((item, idx) => {
     const card = document.createElement('div');
     card.className = 'listing-card';
-    card.setAttribute('tabindex', '0');
-    card.setAttribute('role', 'button');
-    card.setAttribute('aria-expanded', 'false');
     card.setAttribute('data-item-id', item.id);
 
     const head = document.createElement('div');
@@ -2038,6 +2082,7 @@ function renderList() {
       heartBtn.type = 'button';
       heartBtn.className = 'save-heart' + (savedList.includes(item.id) ? ' saved' : '');
       heartBtn.setAttribute('aria-label', 'Merken');
+      heartBtn.setAttribute('aria-pressed', String(savedList.includes(item.id)));
       heartBtn.innerHTML = savedList.includes(item.id) ? ICONS.heartFilled : ICONS.heartOutline;
       heartBtn.addEventListener('click', (e) => {
         e.stopPropagation();
@@ -2064,9 +2109,13 @@ function renderList() {
       body.appendChild(usernameEl);
     }
 
-    const hint = document.createElement('div');
+    const expandId = 'details-' + idx;
+    const hint = document.createElement('button');
+    hint.type = 'button';
     hint.className = 'toggle-hint';
-    hint.innerHTML = 'Details anzeigen <span class="chev">▾</span>';
+    hint.setAttribute('aria-expanded', 'false');
+    hint.setAttribute('aria-controls', expandId);
+    hint.innerHTML = 'Details anzeigen <span class="chev" aria-hidden="true">▾</span>';
     body.appendChild(hint);
 
     head.appendChild(body);
@@ -2074,6 +2123,7 @@ function renderList() {
 
     const expandBody = document.createElement('div');
     expandBody.className = 'expand-body';
+    expandBody.id = expandId;
 
     if (item.beschreibung) {
       const p = document.createElement('p');
@@ -2301,16 +2351,8 @@ function renderList() {
 
     card.appendChild(expandBody);
 
-    const toggle = () => {
-      const isOpen = card.classList.toggle('expanded');
-      card.setAttribute('aria-expanded', String(isOpen));
-      hint.firstChild.textContent = isOpen ? 'Details ausblenden ' : 'Details anzeigen ';
-    };
-    card.addEventListener('click', toggle);
-    card.addEventListener('keydown', (e) => {
-      if (e.target !== card) return;
-      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggle(); }
-    });
+    // Klick auf die ganze Karte (Maus) oder den Details-Button (Tastatur/Screenreader) klappt auf
+    card.addEventListener('click', () => setCardExpanded(card, !card.classList.contains('expanded')));
     if (imgEl) {
       imgEl.addEventListener('click', (e) => e.stopPropagation());
     }
@@ -2335,10 +2377,7 @@ function renderList() {
     const targetCard = container.querySelector('[data-item-id="' + CSS.escape(targetId) + '"]');
     if (targetCard) {
       setTimeout(() => {
-        targetCard.classList.add('expanded');
-        targetCard.setAttribute('aria-expanded', 'true');
-        const hint = targetCard.querySelector('.toggle-hint');
-        if (hint && hint.firstChild) hint.firstChild.textContent = 'Details ausblenden ';
+        setCardExpanded(targetCard, true);
         targetCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
       }, 100);
     }
@@ -2363,10 +2402,7 @@ function handleDeepLink() {
   const tab = params.get('tab');
   const id = params.get('id');
   if (!id) return;
-  if (tab === 'gesuche') currentTab = 'gesuche';
-  else currentTab = 'jobs';
-  document.getElementById('tab-jobs').classList.toggle('active', currentTab === 'jobs');
-  document.getElementById('tab-gesuche').classList.toggle('active', currentTab === 'gesuche');
+  setActiveTab(tab === 'gesuche' ? 'gesuche' : 'jobs');
   pendingDeepLinkId = id;
 }
 
@@ -2435,24 +2471,6 @@ function setupSurfRide() {
   });
 }
 
-const revealObserver = new IntersectionObserver((entries) => {
-  entries.forEach((entry) => {
-    if (entry.isIntersecting) {
-      entry.target.classList.add('in-view');
-      revealObserver.unobserve(entry.target);
-    }
-  });
-}, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
-
-function observeReveal(el, direction) {
-  el.classList.add('reveal', direction === 'right' ? 'from-right' : 'from-left');
-  revealObserver.observe(el);
-}
-
-function setupStaticReveals() {
-
-}
-
 document.addEventListener('keydown', function (e) {
   if (e.key !== '/') return;
   const active = document.activeElement;
@@ -2470,11 +2488,11 @@ window.addEventListener('offline', () => {
 });
 window.addEventListener('online', () => {
   showIsland(ICONS.wifi, 'Wieder online');
+  if (loadFailed.jobs || loadFailed.gesuche) retryLoad();
 });
 
 setupLogoSpin();
 setupSurfRide();
-setupStaticReveals();
 
 function updatePitchTrack() {
   const section = document.getElementById('pitch-section');
