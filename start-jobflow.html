@@ -966,7 +966,7 @@ footer { background: var(--bg-2); padding: 30px 0 40px; overflow: hidden; }
   </div>
 
   <div class="form-panel" id="form-gesuche">
-    <h2>Gesuch aufgeben</h2>
+    <h2>Suchanzeige aufgeben</h2>
     <div class="sub">Für alle, die einen Job in Ostfriesland suchen.</div>
     <div class="form-grid">
       <div class="field"><label for="g-name">Name</label><input type="text" id="g-name" placeholder="Vor- und Nachname"></div>
@@ -999,7 +999,7 @@ footer { background: var(--bg-2); padding: 30px 0 40px; overflow: hidden; }
     </div>
     <div class="error-msg" id="g-error" style="display:none;"></div>
     <div class="form-actions">
-      <button class="btn btn-primary" onclick="submitGesuch()">Gesuch veröffentlichen</button>
+      <button class="btn btn-primary" onclick="submitGesuch()">Suchanzeige veröffentlichen</button>
       <button class="btn btn-ghost" onclick="cancelForm('gesuche')">Abbrechen</button>
     </div>
   </div>
@@ -1062,7 +1062,7 @@ footer { background: var(--bg-2); padding: 30px 0 40px; overflow: hidden; }
 <section class="statement" id="statement" aria-label="Warum Jobflow">
   <div class="statement-sticky">
     <div class="wrap">
-      <p class="statement-text" id="statement-text">Ostfriesland ist nicht groß. Aber Arbeit gibt es an jeder Ecke – beim Bäcker, auf dem Hof, im Verein hinterm Deich. Jobflow bringt das an <em>einen Ort.</em></p>
+      <p class="statement-text" id="statement-text">Ostfriesland ist nicht groß.<br> Aber Arbeit gibt es an jeder Ecke – beim Bäcker, auf dem Hof, im Verein hinterm Deich. Jobflow bringt das an <em>einen Ort.</em></p>
       <div class="statement-ride" id="statement-ride" aria-hidden="true">
         <svg viewBox="0 0 1000 60" preserveAspectRatio="none"><path class="ride-base" id="ride-base"></path><path class="ride-done" id="ride-done" pathLength="1"></path></svg>
         <div class="ride-surfer surfer-bg" id="ride-surfer"></div>
@@ -1085,9 +1085,9 @@ footer { background: var(--bg-2); padding: 30px 0 40px; overflow: hidden; }
 <section class="cta-band" aria-label="Mitmachen">
   <div class="wrap">
     <h2>Du suchst selbst einen Job?</h2>
-    <p>Stell ein Gesuch ein. Unternehmen und Vereine aus der Gegend können sich dann bei dir melden.</p>
+    <p>Gib eine Suchanzeige auf. Unternehmen und Vereine aus der Gegend können sich dann bei dir melden.</p>
     <div class="btn-row">
-      <a href="#" class="btn btn-primary" onclick="switchTab('gesuche'); requestForm(); return false;">Gesuch aufgeben</a>
+      <a href="#" class="btn btn-primary" onclick="switchTab('gesuche'); requestForm(); return false;">Suchanzeige aufgeben</a>
       <a href="#anzeigen" class="btn btn-ghost" onclick="switchTab('jobs'); scrollToList(); return false;">Jobs ansehen</a>
     </div>
   </div>
@@ -2160,7 +2160,7 @@ async function submitJob() {
 async function submitGesuch() {
   const errorEl = document.getElementById('g-error');
   if (!currentUser) {
-    showFormError(errorEl, 'Bitte zuerst anmelden, um ein Gesuch aufzugeben.');
+    showFormError(errorEl, 'Bitte zuerst anmelden, um eine Suchanzeige aufzugeben.');
     return;
   }
   const name = document.getElementById('g-name').value.trim();
@@ -2191,10 +2191,10 @@ async function submitGesuch() {
     renderList();
     updateHeroStat();
     renderOrtMap();
-    showIsland(ICONS.check, 'Gesuch veröffentlicht', { onClick: scrollToList });
+    showIsland(ICONS.check, 'Suchanzeige veröffentlicht', { onClick: scrollToList });
   } catch (e) {
     hideIsland();
-    showFormError(errorEl, 'Gesuch konnte nicht gespeichert werden. Bitte nochmal versuchen.');
+    showFormError(errorEl, 'Suchanzeige konnte nicht gespeichert werden. Bitte nochmal versuchen.');
   }
 }
 
@@ -2866,7 +2866,7 @@ function buildSheetContent(item, type) {
 
   const mailSubject = type === 'jobs'
     ? 'Interesse an: ' + item.titel
-    : 'Interesse an deinem Gesuch: ' + item.name;
+    : 'Interesse an deiner Suchanzeige: ' + item.name;
   const mail = document.createElement('a');
   mail.className = 'btn btn-primary';
   mail.href = 'mailto:' + item.email + '?subject=' + encodeURIComponent(mailSubject);
@@ -2879,7 +2879,7 @@ function buildSheetContent(item, type) {
   const listingLink = buildListingLink(type, item.id);
   const shareText = type === 'jobs'
     ? 'Stellenanzeige bei Jobflow: ' + item.titel + ' bei ' + item.firma + ' (' + item.ort + ') — ' + listingLink
-    : 'Gesuch bei Jobflow: ' + item.name + ' sucht einen Job (' + item.art + ', ' + item.ort + ') — ' + listingLink;
+    : 'Suchanzeige bei Jobflow: ' + item.name + ' sucht einen Job (' + item.art + ', ' + item.ort + ') — ' + listingLink;
   const shareBtn = document.createElement('button');
   shareBtn.type = 'button';
   shareBtn.className = 'round-btn';
@@ -3144,7 +3144,7 @@ function renderList() {
       ? 'Keine Anzeigen gefunden, die zu deinen Filtern passen.'
       : getRandomEmptyJoke() + ' ' + (type === 'jobs'
         ? 'Sei die Erste, die eine Stellenanzeige einstellt.'
-        : 'Sei der Erste, der ein Gesuch einstellt.');
+        : 'Sei der Erste, der eine Suchanzeige aufgibt.');
     empty.appendChild(msg);
     if (filtersActive) {
       const resetBtn = document.createElement('button');
