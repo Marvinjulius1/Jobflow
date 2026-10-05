@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Jobflow – Unternehmensflyer Variante 3 (Karte)</title>
+<!--
+  Variante 3 „Karte“: vorne stilisierte Ostfriesland-Karte mit den Orten,
+  hinten zwei Wege (Stellenanzeige / Suchanzeigen durchsuchen) + Einsatzbeispiele + QR.
+  Format: DIN lang (99 × 210 mm), Hochformat, 2 Seiten (1 = Vorderseite, 2 = Rückseite).
+  Druck: Ränder „Keine“, „Hintergrundgrafiken“ an, Skalierung 100 %.
+-->
+<style>
+:root {
+  --bg: #0A0A0B; --bg-2: #111113;
+  --surface: rgba(255,255,255,0.04); --surface-2: rgba(255,255,255,0.07);
+  --border: rgba(255,255,255,0.08); --border-strong: rgba(255,255,255,0.16);
+  --text: #F5F5F7; --muted: #A1A1A6; --dim: #6E6E73;
+  --accent: #FF7A2F; --accent-2: #FFA462; --accent-rgb: 255,122,47;
+  --radius: 22px; --radius-sm: 14px;
+  --font: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", system-ui, "Segoe UI Variable", "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+@page { size: 99mm 210mm; margin: 0; }
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { background: #2a2a2e; }
+body { font-family: var(--font); color: var(--text); -webkit-font-smoothing: antialiased; -webkit-print-color-adjust: exact; print-color-adjust: exact; padding: 24px 0; display: flex; justify-content: center; gap: 24px; flex-wrap: wrap; }
+.page { position: relative; width: 99mm; height: 210mm; overflow: hidden; background: var(--bg); box-shadow: 0 20px 60px rgba(0,0,0,0.5); padding: 10mm 8mm 8mm; display: flex; flex-direction: column; }
+.glow { position: absolute; border-radius: 50%; pointer-events: none; }
+.content { position: relative; z-index: 1; display: flex; flex-direction: column; flex: 1; min-height: 0; }
+.brand { display: flex; align-items: center; gap: 2mm; font-size: 17pt; font-weight: 700; letter-spacing: -0.03em; }
+.brand .flow { color: var(--accent); }
+.surfer { width: 7mm; aspect-ratio: 134 / 154; background: url("data:image/webp;base64,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") center / contain no-repeat; }
+.accent { color: var(--accent); }
+.glass { background: linear-gradient(160deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.025) 100%); border: 1px solid var(--border-strong); border-radius: var(--radius); }
+.ph { color: var(--accent); border-bottom: 0.3mm dashed var(--accent); }
+
+/* ===== Vorderseite ===== */
+.front .glow-1 { width: 130mm; height: 130mm; top: 60mm; left: -15mm; background: radial-gradient(circle, rgba(var(--accent-rgb),0.32) 0%, rgba(var(--accent-rgb),0.08) 45%, transparent 70%); }
+.front .eyebrow { margin-top: 9mm; font-size: 8.5pt; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent); }
+.front h1 { margin-top: 2.5mm; font-size: 30pt; font-weight: 800; line-height: 0.98; letter-spacing: -0.045em; }
+.front .lead { margin-top: 3.5mm; font-size: 9pt; line-height: 1.45; color: var(--muted); }
+.front .lead strong { color: var(--text); font-weight: 600; }
+
+.map { margin-top: 5mm; padding: 3mm; }
+.map svg { display: block; width: 100%; height: auto; }
+.map .city { fill: var(--text); font-family: var(--font); font-size: 3.1px; font-weight: 700; }
+.map .isle { fill: var(--muted); font-size: 2.7px; font-weight: 600; }
+.map-note { margin-top: 1.5mm; display: flex; justify-content: space-between; font-size: 6.5pt; color: var(--dim); padding: 0 1mm; }
+
+.front .stats { margin-top: auto; display: grid; grid-template-columns: repeat(3, 1fr); gap: 2mm; }
+.front .stat { padding: 3mm 2mm; text-align: center; border-radius: var(--radius-sm); }
+.front .stat b { display: block; font-size: 14pt; font-weight: 800; letter-spacing: -0.03em; color: var(--accent); }
+.front .stat span { display: block; margin-top: 0.5mm; font-size: 6.5pt; line-height: 1.25; color: var(--muted); }
+.front .claim { margin-top: 4mm; display: flex; justify-content: space-between; font-size: 7.5pt; color: var(--muted); }
+.front .claim b { color: var(--accent); }
+
+/* ===== Rückseite ===== */
+.back .glow-1 { width: 110mm; height: 110mm; top: -45mm; left: -45mm; background: radial-gradient(circle, rgba(var(--accent-rgb),0.3) 0%, rgba(var(--accent-rgb),0.08) 45%, transparent 70%); }
+.back .glow-2 { width: 120mm; height: 120mm; bottom: -40mm; right: -50mm; background: radial-gradient(circle, rgba(var(--accent-rgb),0.36) 0%, rgba(var(--accent-rgb),0.08) 45%, transparent 70%); }
+.back h2 { margin-top: 6mm; font-size: 17pt; font-weight: 800; line-height: 1.05; letter-spacing: -0.035em; }
+
+.way { margin-top: 3.5mm; padding: 3.8mm 4mm; border-radius: var(--radius-sm); }
+.way .k { display: flex; align-items: center; gap: 2mm; font-size: 6.5pt; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent); }
+.way .k i { width: 5mm; height: 5mm; border-radius: 50%; display: grid; place-items: center; font-style: normal; background: var(--accent); color: var(--bg); font-size: 6.5pt; }
+.way h3 { margin-top: 1.6mm; font-size: 10.5pt; font-weight: 800; letter-spacing: -0.02em; }
+.way p { margin-top: 1mm; font-size: 7.3pt; line-height: 1.4; color: var(--muted); }
+.way p strong { color: var(--text); font-weight: 600; }
+
+.uses-lbl { margin-top: 4.5mm; font-size: 6.5pt; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; color: var(--dim); }
+.uses { margin-top: 2mm; display: grid; grid-template-columns: 1fr 1fr; gap: 2mm; }
+.use { padding: 2.4mm 2.8mm; border-radius: 10px; background: var(--surface); border: 1px solid var(--border-strong); }
+.use b { display: block; font-size: 7.6pt; font-weight: 700; }
+.use span { display: block; margin-top: 0.4mm; font-size: 6.6pt; line-height: 1.3; color: var(--muted); }
+
+.cta { margin-top: auto; padding: 4.5mm; display: grid; grid-template-columns: 1fr 32mm; gap: 3.5mm; align-items: center; }
+.cta h3 { font-size: 12.5pt; font-weight: 800; line-height: 1.05; letter-spacing: -0.03em; }
+.cta p { margin-top: 1.8mm; font-size: 7.2pt; line-height: 1.35; color: var(--muted); }
+.cta .url { margin-top: 2.2mm; font-size: 7pt; font-weight: 700; white-space: nowrap; }
+.qr { width: 32mm; height: 32mm; border-radius: 12px; border: 0.8mm dashed var(--accent); background: repeating-linear-gradient(45deg, rgba(var(--accent-rgb),0.08) 0 2mm, transparent 2mm 4mm); display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 2mm; gap: 1mm; }
+.qr .tag { font-size: 8.5pt; font-weight: 800; color: var(--accent); letter-spacing: 0.04em; }
+.qr .hint { font-size: 5.6pt; line-height: 1.25; font-weight: 600; }
+.back .foot { margin-top: 3.5mm; display: flex; justify-content: space-between; align-items: center; font-size: 7pt; color: var(--muted); }
+.back .foot .brand { font-size: 10pt; gap: 1.4mm; }
+.back .foot .surfer { width: 4.2mm; }
+
+@media print {
+  html, body { background: var(--bg); padding: 0; display: block; }
+  .page { box-shadow: none; break-after: page; page-break-after: always; }
+  .page:last-child { break-after: auto; page-break-after: auto; }
+}
+</style>
+</head>
+<body>
+
+<!-- ===================== SEITE 1: VORDERSEITE ===================== -->
+<div class="page front">
+  <div class="glow glow-1"></div>
+  <div class="content">
+    <div class="brand"><span class="surfer"></span><span>Job<span class="flow">flow</span></span></div>
+
+    <p class="eyebrow">Für Betriebe &amp; Vereine</p>
+    <h1>Von Borkum bis Wiesmoor. <span class="accent">Leute finden, die hier wohnen.</span></h1>
+    <p class="lead">Jobflow ist die Jobbörse <strong>nur für Ostfriesland</strong>. Ihre Anzeige erreicht genau die Menschen, die morgen auch wirklich vorbeikommen können.</p>
+
+    <div class="glass map">
+      <!-- Stilisierte Karte, Orte nach ungefähren Koordinaten platziert (nicht maßstabsgetreu) -->
+      <svg viewBox="0 0 90 72" aria-label="Stilisierte Karte von Ostfriesland">
+        <defs>
+          <pattern id="dots" width="3" height="3" patternUnits="userSpaceOnUse"><circle cx="1.5" cy="1.5" r="0.28" fill="rgba(255,255,255,0.13)"/></pattern>
+          <radialGradient id="pin"><stop offset="0" stop-color="#FF7A2F" stop-opacity="0.55"/><stop offset="1" stop-color="#FF7A2F" stop-opacity="0"/></radialGradient>
+        </defs>
+        <!-- Festland (abstrakt) -->
+        <path d="M2 30 C 12 26, 22 22, 32 19 C 42 16, 52 17, 62 13 C 70 11, 80 14, 88 17 L 88 72 L 2 72 Z" fill="url(#dots)"/>
+        <path d="M2 30 C 12 26, 22 22, 32 19 C 42 16, 52 17, 62 13 C 70 11, 80 14, 88 17" fill="none" stroke="rgba(255,164,98,0.45)" stroke-width="0.35" stroke-dasharray="1 0.8"/>
+        <!-- Verbindungslinien -->
+        <g stroke="rgba(255,122,47,0.35)" stroke-width="0.25" fill="none">
+          <path d="M40 43 L56 33 L71 38 M56 33 L54 57 L49 64 M40 43 L54 57 M56 33 L40 23 M56 33 L64 18 L74 24"/>
+        </g>
+        <!-- Inseln -->
+        <g fill="#FF7A2F">
+          <ellipse cx="8" cy="20" rx="3.6" ry="1.2" fill="rgba(255,255,255,0.18)"/>
+          <ellipse cx="27" cy="11" rx="4.5" ry="0.8" fill="rgba(255,255,255,0.18)"/>
+          <ellipse cx="38" cy="8.5" rx="4.2" ry="1" fill="rgba(255,255,255,0.18)"/>
+          <ellipse cx="57" cy="5" rx="4" ry="0.9" fill="rgba(255,255,255,0.18)"/>
+          <circle cx="8" cy="20" r="0.9"/><circle cx="27" cy="11" r="0.9"/><circle cx="38" cy="8.5" r="0.9"/><circle cx="57" cy="5" r="0.9"/>
+        </g>
+        <text class="city isle" x="8" y="25" text-anchor="middle">Borkum</text>
+        <text class="city isle" x="27" y="15.5" text-anchor="middle">Juist</text>
+        <text class="city isle" x="40" y="5" text-anchor="middle">Norderney</text>
+        <text class="city isle" x="64" y="4" text-anchor="start">Langeoog</text>
+        <!-- Festland-Orte -->
+        <g>
+          <circle cx="40" cy="23" r="3.2" fill="url(#pin)"/><circle cx="40" cy="23" r="1.1" fill="#FF7A2F"/>
+          <circle cx="64" cy="18" r="3.2" fill="url(#pin)"/><circle cx="64" cy="18" r="1.1" fill="#FF7A2F"/>
+          <circle cx="74" cy="24" r="3.2" fill="url(#pin)"/><circle cx="74" cy="24" r="1.1" fill="#FF7A2F"/>
+          <circle cx="56" cy="33" r="4.2" fill="url(#pin)"/><circle cx="56" cy="33" r="1.5" fill="#FF7A2F"/>
+          <circle cx="40" cy="43" r="4.2" fill="url(#pin)"/><circle cx="40" cy="43" r="1.5" fill="#FF7A2F"/>
+          <circle cx="71" cy="38" r="3.2" fill="url(#pin)"/><circle cx="71" cy="38" r="1.1" fill="#FF7A2F"/>
+          <circle cx="54" cy="57" r="4.2" fill="url(#pin)"/><circle cx="54" cy="57" r="1.5" fill="#FF7A2F"/>
+          <circle cx="49" cy="64" r="3.2" fill="url(#pin)"/><circle cx="49" cy="64" r="1.1" fill="#FF7A2F"/>
+        </g>
+        <text class="city" x="37.5" y="24.2" text-anchor="end">Norden</text>
+        <text class="city" x="64" y="14.5" text-anchor="middle">Esens</text>
+        <text class="city" x="74" y="29.2" text-anchor="middle">Wittmund</text>
+        <text class="city" x="58.5" y="32">Aurich</text>
+        <text class="city" x="37.5" y="44.2" text-anchor="end">Emden</text>
+        <text class="city" x="71" y="43.6" text-anchor="middle">Wiesmoor</text>
+        <text class="city" x="56.5" y="58.2">Leer</text>
+        <text class="city" x="46.5" y="65.2" text-anchor="end">Weener</text>
+      </svg>
+      <div class="map-note"><span>Stilisierte Darstellung</span><span>… und überall dazwischen</span></div>
+    </div>
+
+    <div class="stats">
+      <div class="glass stat"><b>0 €</b><span>für Anzeigen &amp; Suche</span></div>
+      <div class="glass stat"><b>7</b><span>Job-Arten von Minijob bis Verein</span></div>
+      <div class="glass stat"><b>1</b><span>Ort für die ganze Region</span></div>
+    </div>
+    <div class="claim"><span>Jobflow – Suche und Finde</span><span>Nur <b>Ostfriesland</b></span></div>
+  </div>
+</div>
+
+<!-- ===================== SEITE 2: RÜCKSEITE ===================== -->
+<div class="page back">
+  <div class="glow glow-1"></div><div class="glow glow-2"></div>
+  <div class="content">
+    <div class="brand"><span class="surfer"></span><span>Job<span class="flow">flow</span></span></div>
+
+    <h2>Zwei Wege zu <span class="accent">Ihrer neuen Verstärkung.</span></h2>
+
+    <div class="glass way">
+      <div class="k"><i>1</i> Sie suchen Leute</div>
+      <h3>Stellenanzeige aufgeben</h3>
+      <p>Jobtitel, Art, Ort und Beschreibung eintragen – gern mit <strong>Logo oder Foto</strong> und <strong>Bewerbungsfrist</strong>. Bewerbungen kommen <strong>per E-Mail</strong> direkt zu Ihnen.</p>
+    </div>
+    <div class="glass way">
+      <div class="k"><i>2</i> Leute suchen Sie</div>
+      <h3>Suchanzeigen durchstöbern</h3>
+      <p>Jobsuchende hinterlegen, <strong>was</strong> sie suchen, <strong>wo</strong> und <strong>wann sie Zeit haben</strong>. Passt jemand? Einfach selbst anschreiben.</p>
+    </div>
+
+    <div class="uses-lbl">Wofür Betriebe Jobflow nutzen</div>
+    <div class="uses">
+      <div class="use"><b>Saison &amp; Sommer</b><span>Ferienjobs, wenn Gäste kommen</span></div>
+      <div class="use"><b>Wochenende</b><span>Aushilfen &amp; Minijobs</span></div>
+      <div class="use"><b>Nachwuchs</b><span>Praktikum &amp; Ausbildung</span></div>
+      <div class="use"><b>Verein &amp; Feste</b><span>Helfer für Events &amp; Ehrenamt</span></div>
+    </div>
+
+    <section class="glass cta">
+      <div>
+        <h3>Kostenlos <span class="accent">loslegen.</span></h3>
+        <p>QR-Code scannen, Konto als Unternehmen / Verein anlegen, Anzeige online.</p>
+        <div class="url">www.<span class="ph">DOMAIN-FOLGT</span>.de</div>
+      </div>
+      <div class="qr" role="img" aria-label="Platzhalter für QR-Code"><span class="tag">QR-CODE</span><span class="hint">HIER EINFÜGEN, sobald die Domain feststeht</span></div>
+    </section>
+
+    <div class="foot">
+      <div class="brand"><span class="surfer"></span><span>Job<span class="flow">flow</span></span></div>
+      <span>Suche und Finde</span>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
