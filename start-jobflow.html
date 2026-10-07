@@ -280,7 +280,7 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
 }
 .map-pin.is-active .map-pin-dot, .map-pin[role="button"]:hover .map-pin-dot, .map-pin:focus-visible .map-pin-dot { transform: scale(1.35); }
 .map-pin-label { transition: opacity 0.25s ease; }
-.mapfly-svg.is-overview .map-pin:not(.is-active):not(:hover):not(:focus-visible) .map-pin-label { opacity: 0; }
+.mapfly-svg.is-overview .map-pin:not(.is-major):not(.is-active):not(:hover):not(:focus-visible) .map-pin-label { opacity: 0; }
 .map-pin.is-active .map-pin-ring { animation: pin-ring 1.6s ease-out infinite; }
 @keyframes pin-ring { 0% { opacity: 0.8; transform: scale(0.7); } 100% { opacity: 0; transform: scale(2.2); } }
 .mapfly-card {
@@ -1321,44 +1321,45 @@ const OSTFRIESLAND_KREISE = [
 
 // Alle Städte und Gemeinden Ostfrieslands. x/y sind aus echten Koordinaten auf die Karte
 // umgerechnet (geeicht an den Umrissen der Inseln und der Stadt Emden).
+// ew = Einwohner (gerundet), gross = auch in der Kartenübersicht beschriftet,
 // alias = Ortsteile und andere Schreibweisen, plz = Postleitzahlen der Gemeinde.
 const OSTFRIESLAND_ORTE = [
-  { name: "Borkum", x: 16.9, y: 213.0, alias: [], plz: ["26757"] },
-  { name: "Juist", x: 143.6, y: 155.2, alias: [], plz: ["26571"] },
-  { name: "Norderney", x: 201.1, y: 135.7, alias: [], plz: ["26548"] },
-  { name: "Baltrum", x: 287.0, y: 122.0, alias: [], plz: ["26579"] },
-  { name: "Langeoog", x: 329.3, y: 111.0, alias: [], plz: ["26465"] },
-  { name: "Spiekeroog", x: 408.8, y: 94.1, alias: [], plz: ["26474"] },
-  { name: "Emden", x: 223.5, y: 356.7, alias: ["Larrelt", "Wolthusen", "Borssum", "Barenburg", "Conrebbersweg", "Uphusen"], plz: ["26721", "26723", "26725"] },
-  { name: "Norden", x: 223.5, y: 207.8, alias: ["Norddeich", "Leybuchtpolder", "Westermarsch"], plz: ["26506"] },
-  { name: "Aurich", x: 329.3, y: 289.1, alias: ["Sandhorst", "Wallinghausen", "Tannenhausen", "Middels", "Plaggenburg", "Egels", "Popens", "Extum", "Haxtum"], plz: ["26603", "26605", "26607"] },
-  { name: "Wiesmoor", x: 424.0, y: 324.8, alias: ["Marcardsmoor", "Hinrichsfehn", "Voßbarg"], plz: ["26639"] },
-  { name: "Großefehn", x: 363.5, y: 339.1, alias: ["Ostgroßefehn", "Westgroßefehn", "Timmel", "Spetzerfehn", "Mittegroßefehn", "Holtrop", "Bagband", "Strackholt"], plz: ["26629"] },
-  { name: "Ihlow", x: 312.5, y: 335.2, alias: ["Ihlowerfehn", "Simonswolde", "Riepe", "Westerende", "Ludwigsdorf", "Ochtelbur"], plz: ["26632"] },
-  { name: "Südbrookmerland", x: 289.7, y: 285.8, alias: ["Moordorf", "Victorbur", "Wiegboldsbur", "Münkeboe", "Theene", "Uthwerdum", "Moorhusen"], plz: ["26624"] },
-  { name: "Krummhörn", x: 177.5, y: 322.2, alias: ["Pewsum", "Greetsiel", "Upleward", "Campen", "Loquard", "Rysum", "Groothusen", "Manslagt", "Visquard", "Hamswehrum", "Uttum"], plz: ["26736"] },
-  { name: "Hinte", x: 216.3, y: 324.8, alias: ["Loppersum", "Suurhusen", "Osterhusen", "Westerhusen", "Groß Midlum"], plz: ["26759"] },
-  { name: "Marienhafe", x: 250.1, y: 255.3, alias: ["Brookmerland", "Upgant-Schott", "Osteel", "Rechtsupweg", "Leezdorf", "Wirdum"], plz: ["26529"] },
-  { name: "Großheide", x: 277.5, y: 219.5, alias: ["Arle", "Berumerfehn", "Westerende-Kirchloog"], plz: ["26532"] },
-  { name: "Hage", x: 253.6, y: 203.3, alias: ["Berumbur", "Lütetsburg", "Halbemond", "Hagermarsch"], plz: ["26524"] },
-  { name: "Dornum", x: 309.5, y: 175.3, alias: ["Neßmersiel", "Nessmersiel", "Dornumersiel", "Westeraccum", "Resterhafe"], plz: ["26553"] },
-  { name: "Wittmund", x: 441.9, y: 221.5, alias: ["Carolinensiel", "Harlesiel", "Leerhafe", "Burhafe", "Funnix", "Buttforde", "Asel", "Blersum", "Ardorf"], plz: ["26409"] },
-  { name: "Esens", x: 378.0, y: 174.0, alias: ["Bensersiel", "Holtgast", "Stedesdorf", "Werdum", "Moorweg", "Dunum"], plz: ["26427"] },
-  { name: "Neuharlingersiel", x: 413.4, y: 140.2, alias: [], plz: [] },
-  { name: "Friedeburg", x: 463.2, y: 300.8, alias: ["Reepsholt", "Wiesedermeer", "Marx", "Etzel", "Horsten", "Bentstreek"], plz: ["26446"] },
-  { name: "Westerholt", x: 318.2, y: 210.4, alias: ["Holtriem", "Nenndorf", "Schweindorf", "Utarp", "Eversmeer", "Blomberg", "Neuschoo", "Ochtersum"], plz: ["26556", "26487", "26489"] },
-  { name: "Leer", x: 320.5, y: 445.1, alias: ["Loga", "Heisfelde", "Bingum", "Nüttermoor", "Leerort", "Logabirum", "Hohegaste"], plz: ["26789"] },
-  { name: "Weener", x: 280.6, y: 488.6, alias: ["Möhlenwarf", "Stapelmoor", "Holthusen", "Weenermoor"], plz: ["26826"] },
-  { name: "Moormerland", x: 312.5, y: 395.7, alias: ["Warsingsfehn", "Veenhusen", "Neermoor", "Oldersum", "Jheringsfehn", "Hatshausen", "Boekzetelerfehn"], plz: ["26802"] },
-  { name: "Westoverledingen", x: 310.3, y: 486.7, alias: ["Ihrhove", "Flachsmeer", "Völlenerfehn", "Steenfelde", "Großwolde"], plz: ["26810"] },
-  { name: "Rhauderfehn", x: 362.0, y: 510.1, alias: ["Westrhauderfehn", "Burlage", "Langholt", "Backemoor", "Holte"], plz: ["26817"] },
-  { name: "Ostrhauderfehn", x: 379.9, y: 504.9, alias: ["Idafehn", "Holterfehn", "Potshausen"], plz: ["26842"] },
-  { name: "Uplengen", x: 430.1, y: 434.0, alias: ["Remels", "Jübberde", "Hollen", "Stapel", "Großsander", "Ockenhausen"], plz: ["26670"] },
-  { name: "Hesel", x: 371.9, y: 397.6, alias: ["Holtland", "Brinkum", "Neukamperfehn", "Firrel", "Schwerinsdorf"], plz: ["26835"] },
-  { name: "Bunde", x: 247.9, y: 476.3, alias: ["Wymeer", "Boen", "Dollart", "Bunderhee"], plz: ["26831"] },
-  { name: "Jemgum", x: 291.6, y: 421.0, alias: ["Ditzum", "Holtgaste", "Midlum", "Critzum"], plz: ["26844"] },
-  { name: "Detern", x: 405.0, y: 462.0, alias: ["Stickhausen", "Velde"], plz: ["26847"] },
-  { name: "Filsum", x: 386.0, y: 441.2, alias: ["Jümme", "Nortmoor"], plz: ["26849", "26845"] }
+  { name: "Borkum", x: 16.9, y: 213.0, ew: 5000, gross: true, alias: [], plz: ["26757"] },
+  { name: "Juist", x: 143.6, y: 155.2, ew: 1500, gross: false, alias: [], plz: ["26571"] },
+  { name: "Norderney", x: 201.1, y: 135.7, ew: 6000, gross: true, alias: [], plz: ["26548"] },
+  { name: "Baltrum", x: 287.0, y: 122.0, ew: 600, gross: false, alias: [], plz: ["26579"] },
+  { name: "Langeoog", x: 329.3, y: 111.0, ew: 1800, gross: false, alias: [], plz: ["26465"] },
+  { name: "Spiekeroog", x: 408.8, y: 94.1, ew: 800, gross: false, alias: [], plz: ["26474"] },
+  { name: "Emden", x: 223.5, y: 356.7, ew: 50000, gross: true, alias: ["Larrelt", "Wolthusen", "Borssum", "Barenburg", "Conrebbersweg", "Uphusen"], plz: ["26721", "26723", "26725"] },
+  { name: "Norden", x: 223.5, y: 207.8, ew: 25000, gross: true, alias: ["Norddeich", "Leybuchtpolder", "Westermarsch"], plz: ["26506"] },
+  { name: "Aurich", x: 329.3, y: 289.1, ew: 42000, gross: true, alias: ["Sandhorst", "Wallinghausen", "Tannenhausen", "Middels", "Plaggenburg", "Egels", "Popens", "Extum", "Haxtum"], plz: ["26603", "26605", "26607"] },
+  { name: "Wiesmoor", x: 424.0, y: 324.8, ew: 13000, gross: true, alias: ["Marcardsmoor", "Hinrichsfehn", "Voßbarg"], plz: ["26639"] },
+  { name: "Großefehn", x: 363.5, y: 339.1, ew: 14000, gross: false, alias: ["Ostgroßefehn", "Westgroßefehn", "Timmel", "Spetzerfehn", "Mittegroßefehn", "Holtrop", "Bagband", "Strackholt"], plz: ["26629"] },
+  { name: "Ihlow", x: 312.5, y: 335.2, ew: 12500, gross: false, alias: ["Ihlowerfehn", "Simonswolde", "Riepe", "Westerende", "Ludwigsdorf", "Ochtelbur"], plz: ["26632"] },
+  { name: "Südbrookmerland", x: 289.7, y: 285.8, ew: 19000, gross: false, alias: ["Moordorf", "Victorbur", "Wiegboldsbur", "Münkeboe", "Theene", "Uthwerdum", "Moorhusen"], plz: ["26624"] },
+  { name: "Krummhörn", x: 177.5, y: 322.2, ew: 12000, gross: false, alias: ["Pewsum", "Greetsiel", "Upleward", "Campen", "Loquard", "Rysum", "Groothusen", "Manslagt", "Visquard", "Hamswehrum", "Uttum"], plz: ["26736"] },
+  { name: "Hinte", x: 216.3, y: 324.8, ew: 7400, gross: false, alias: ["Loppersum", "Suurhusen", "Osterhusen", "Westerhusen", "Groß Midlum"], plz: ["26759"] },
+  { name: "Marienhafe", x: 250.1, y: 255.3, ew: 13000, gross: false, alias: ["Brookmerland", "Upgant-Schott", "Osteel", "Rechtsupweg", "Leezdorf", "Wirdum"], plz: ["26529"] },
+  { name: "Großheide", x: 277.5, y: 219.5, ew: 8700, gross: false, alias: ["Arle", "Berumerfehn", "Westerende-Kirchloog"], plz: ["26532"] },
+  { name: "Hage", x: 253.6, y: 203.3, ew: 6000, gross: false, alias: ["Berumbur", "Lütetsburg", "Halbemond", "Hagermarsch"], plz: ["26524"] },
+  { name: "Dornum", x: 309.5, y: 175.3, ew: 4600, gross: false, alias: ["Neßmersiel", "Nessmersiel", "Dornumersiel", "Westeraccum", "Resterhafe"], plz: ["26553"] },
+  { name: "Wittmund", x: 441.9, y: 221.5, ew: 20000, gross: true, alias: ["Carolinensiel", "Harlesiel", "Leerhafe", "Burhafe", "Funnix", "Buttforde", "Asel", "Blersum", "Ardorf"], plz: ["26409"] },
+  { name: "Esens", x: 378.0, y: 174.0, ew: 7200, gross: true, alias: ["Bensersiel", "Holtgast", "Stedesdorf", "Werdum", "Moorweg", "Dunum"], plz: ["26427"] },
+  { name: "Neuharlingersiel", x: 413.4, y: 140.2, ew: 1000, gross: false, alias: [], plz: [] },
+  { name: "Friedeburg", x: 463.2, y: 300.8, ew: 10000, gross: false, alias: ["Reepsholt", "Wiesedermeer", "Marx", "Etzel", "Horsten", "Bentstreek"], plz: ["26446"] },
+  { name: "Westerholt", x: 318.2, y: 210.4, ew: 8000, gross: false, alias: ["Holtriem", "Nenndorf", "Schweindorf", "Utarp", "Eversmeer", "Blomberg", "Neuschoo", "Ochtersum"], plz: ["26556", "26487", "26489"] },
+  { name: "Leer", x: 320.5, y: 445.1, ew: 35000, gross: true, alias: ["Loga", "Heisfelde", "Bingum", "Nüttermoor", "Leerort", "Logabirum", "Hohegaste"], plz: ["26789"] },
+  { name: "Weener", x: 280.6, y: 488.6, ew: 16000, gross: true, alias: ["Möhlenwarf", "Stapelmoor", "Holthusen", "Weenermoor"], plz: ["26826"] },
+  { name: "Moormerland", x: 312.5, y: 395.7, ew: 23000, gross: true, alias: ["Warsingsfehn", "Veenhusen", "Neermoor", "Oldersum", "Jheringsfehn", "Hatshausen", "Boekzetelerfehn"], plz: ["26802"] },
+  { name: "Westoverledingen", x: 310.3, y: 486.7, ew: 21000, gross: false, alias: ["Ihrhove", "Flachsmeer", "Völlenerfehn", "Steenfelde", "Großwolde"], plz: ["26810"] },
+  { name: "Rhauderfehn", x: 362.0, y: 510.1, ew: 18000, gross: true, alias: ["Westrhauderfehn", "Burlage", "Langholt", "Backemoor", "Holte"], plz: ["26817"] },
+  { name: "Ostrhauderfehn", x: 379.9, y: 504.9, ew: 11000, gross: false, alias: ["Idafehn", "Holterfehn", "Potshausen"], plz: ["26842"] },
+  { name: "Uplengen", x: 430.1, y: 434.0, ew: 12000, gross: false, alias: ["Remels", "Jübberde", "Hollen", "Stapel", "Großsander", "Ockenhausen"], plz: ["26670"] },
+  { name: "Hesel", x: 371.9, y: 397.6, ew: 10500, gross: false, alias: ["Holtland", "Brinkum", "Neukamperfehn", "Firrel", "Schwerinsdorf"], plz: ["26835"] },
+  { name: "Bunde", x: 247.9, y: 476.3, ew: 7600, gross: false, alias: ["Wymeer", "Boen", "Dollart", "Bunderhee"], plz: ["26831"] },
+  { name: "Jemgum", x: 291.6, y: 421.0, ew: 3700, gross: false, alias: ["Ditzum", "Holtgaste", "Midlum", "Critzum"], plz: ["26844"] },
+  { name: "Detern", x: 405.0, y: 462.0, ew: 2600, gross: false, alias: ["Stickhausen", "Velde"], plz: ["26847"] },
+  { name: "Filsum", x: 386.0, y: 441.2, ew: 4300, gross: false, alias: ["Jümme", "Nortmoor"], plz: ["26849", "26845"] }
 ];
 
 // Bekannte Ortsteile, die zusätzlich in der Vorschlagsliste der Ort-Felder erscheinen
@@ -1444,6 +1445,7 @@ const MAP_FULL = { cx: 262.5, cy: 320, w: 555 };
 const MAP_RATIO = 520 / 555;
 const STOP_ZOOM_W = 200;
 const MAX_STOPS = 6;
+const MIN_STOP_DIST = 70; // Kartenkoordinaten, ca. 12 km
 
 let mapStops = [];
 let mapStopIndex = -2; // -1 = Übersicht am Ende, -2 = noch nichts angezeigt
@@ -1469,39 +1471,25 @@ function listingsInOrt(ortName) {
   return listingsByOrt.get(ortName) || [];
 }
 
-// Flugroute: im Nordwesten beginnen, dann möglichst kurze Strecke durch alle Stopps
+// Flugroute: bei höchstens 6 Stopps alle Reihenfolgen durchrechnen und die kürzeste Strecke nehmen.
+// Gestartet wird an dem Ende der Strecke, das weiter im Nordwesten liegt (Küste zuerst).
 function orderRoute(orte) {
-  const rest = orte.slice();
-  if (!rest.length) return rest;
-  rest.sort((a, b) => (a.x + a.y) - (b.x + b.y));
-  const route = [rest.shift()];
-  while (rest.length) {
-    const last = route[route.length - 1];
-    let bestIdx = 0;
-    let bestDist = Infinity;
+  if (orte.length < 3) return orte.slice().sort((a, b) => (a.x + a.y) - (b.x + b.y));
+  const dist = (a, b) => Math.hypot(a.x - b.x, a.y - b.y);
+  let best = null;
+  let bestLen = Infinity;
+  const permute = (path, rest, len) => {
+    if (len >= bestLen) return;
+    if (!rest.length) { best = path; bestLen = len; return; }
     rest.forEach((o, i) => {
-      const d = Math.hypot(o.x - last.x, o.y - last.y);
-      if (d < bestDist) { bestDist = d; bestIdx = i; }
+      const next = rest.slice(0, i).concat(rest.slice(i + 1));
+      permute(path.concat(o), next, path.length ? len + dist(path[path.length - 1], o) : 0);
     });
-    route.push(rest.splice(bestIdx, 1)[0]);
-  }
-  // Danach Teilstrecken umdrehen, solange die Gesamtstrecke kürzer wird (keine weiten Sprünge)
-  const routeLength = (r) => r.reduce((sum, o, i) => (i ? sum + Math.hypot(o.x - r[i - 1].x, o.y - r[i - 1].y) : 0), 0);
-  let best = route;
-  let improved = true;
-  while (improved) {
-    improved = false;
-    for (let i = 1; i < best.length - 1; i++) {
-      for (let j = i + 1; j < best.length; j++) {
-        const candidate = best.slice(0, i).concat(best.slice(i, j + 1).reverse(), best.slice(j + 1));
-        if (routeLength(candidate) < routeLength(best) - 0.01) {
-          best = candidate;
-          improved = true;
-        }
-      }
-    }
-  }
-  return best;
+  };
+  permute([], orte, 0);
+  const first = best[0];
+  const last = best[best.length - 1];
+  return (first.x + first.y) <= (last.x + last.y) ? best : best.slice().reverse();
 }
 
 function renderOrtMap() {
@@ -1513,8 +1501,15 @@ function renderOrtMap() {
   OSTFRIESLAND_ORTE.forEach(o => { counts[o.name] = listingsInOrt(o.name).length; });
   const aktiveOrte = OSTFRIESLAND_ORTE.filter(o => counts[o.name]);
 
-  // Stopps: die Orte mit den meisten Anzeigen (max. 6); bei wenig Daten mit festen Orten auffüllen
-  let chosen = aktiveOrte.slice().sort((a, b) => counts[b.name] - counts[a.name]).slice(0, MAX_STOPS);
+  // Stopps: zuerst die Orte mit den meisten Anzeigen, bei Gleichstand die größeren Orte.
+  // Dabei auf Abstand achten, damit die Fahrt über ganz Ostfriesland geht
+  // (sonst landen bei Gleichstand z. B. sechs Inseln nebeneinander auf der Route).
+  const ranked = aktiveOrte.slice().sort((a, b) => (counts[b.name] - counts[a.name]) || (b.ew - a.ew));
+  let chosen = [];
+  ranked.forEach(o => {
+    if (chosen.length < MAX_STOPS && chosen.every(c => Math.hypot(c.x - o.x, c.y - o.y) >= MIN_STOP_DIST)) chosen.push(o);
+  });
+  ranked.forEach(o => { if (chosen.length < MAX_STOPS && !chosen.includes(o)) chosen.push(o); });
   if (chosen.length < 3) {
     FALLBACK_STOPS.forEach(name => {
       if (chosen.length < 4 && !chosen.some(o => o.name === name)) chosen.push(OSTFRIESLAND_ORTE.find(o => o.name === name));
@@ -1529,13 +1524,15 @@ function renderOrtMap() {
       '<text class="ort-region-label" x="' + k.labelX + '" y="' + k.labelY + '">' + k.name + '</text>';
   });
 
-  const pinOrte = OSTFRIESLAND_ORTE.filter(o => counts[o.name] || stops.includes(o.name));
+  // große Orte zuletzt zeichnen, damit ihre Namen über den anderen Pins liegen
+  const pinOrte = OSTFRIESLAND_ORTE.filter(o => counts[o.name] || stops.includes(o.name))
+    .sort((a, b) => (a.gross === b.gross ? 0 : a.gross ? 1 : -1));
   let pinsSvg = '';
   pinOrte.forEach(o => {
     const count = counts[o.name] || 0;
     const jsName = o.name.replace(/'/g, "\\'");
     const label = count ? count + ' ' + (count === 1 ? 'Anzeige' : 'Anzeigen') + ' in ' + o.name + ' anzeigen' : o.name + ': noch keine Anzeigen';
-    pinsSvg += '<g class="map-pin' + (count ? '' : ' is-empty') + '" data-ort="' + o.name + '" transform="translate(' + o.x + ' ' + o.y + ')"' +
+    pinsSvg += '<g class="map-pin' + (count ? '' : ' is-empty') + (o.gross ? ' is-major' : '') + '" data-ort="' + o.name + '" transform="translate(' + o.x + ' ' + o.y + ')"' +
       (count ? ' tabindex="0" role="button" aria-label="' + label + '" onclick="focusOrtFilter(\'' + jsName + '\')" onkeydown="if(event.key===\'Enter\'||event.key===\' \'){event.preventDefault();focusOrtFilter(\'' + jsName + '\')}"' : ' aria-hidden="true"') + '>' +
       '<circle class="map-pin-ring" r="15"></circle>' +
       '<circle class="map-pin-dot" r="10"></circle>' +
@@ -1624,7 +1621,9 @@ function setMapCamera(cam) {
   const k = cam.w / MAP_FULL.w;
   mapSvgEl.style.setProperty('--zoom-k', k.toFixed(4));
   // In der Gesamtansicht kleinere Pins ohne Namen (sonst überlappen sie), beim Heranzoomen normal
-  const pinScale = k * lerp(0.62, 1, clamp((1 - k) / 0.45, 0, 1));
+  // auf kleinen Bildschirmen (Handy) wäre die Schrift sonst zu klein
+  const smallScreen = mapSvgEl.clientWidth < 600;
+  const pinScale = k * lerp(smallScreen ? 1.15 : 0.62, smallScreen ? 1.25 : 1, clamp((1 - k) / 0.45, 0, 1));
   mapSvgEl.classList.toggle('is-overview', k > 0.72);
   mapPinEls.forEach(pin => {
     const o = OSTFRIESLAND_ORTE.find(x => x.name === pin.dataset.ort);
