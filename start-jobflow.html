@@ -266,7 +266,8 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
 .mapfly-map, .mapfly-svg { width: 100%; height: 100%; display: block; }
 .mapfly-svg { --zoom-k: 1; }
 .mapfly-svg .ort-region { fill: #141416; stroke: rgba(var(--accent-rgb), 0.55); stroke-width: 1.5; stroke-linejoin: round; vector-effect: non-scaling-stroke; }
-.mapfly-svg .ort-region-label { font-size: calc(12px * var(--zoom-k)); font-family: var(--font); fill: var(--dim); text-anchor: middle; font-weight: 600; }
+/* Landkreis-Namen ausgeblendet: die Ortspins tragen die Information, Beschriftungen würden sich überlappen */
+.mapfly-svg .ort-region-label { display: none; }
 .map-pin { cursor: default; outline: none; }
 .map-pin[role="button"] { cursor: pointer; }
 .map-pin-ring { fill: none; stroke: var(--accent); stroke-width: 2; opacity: 0; transform-box: fill-box; transform-origin: center; }
@@ -1282,22 +1283,117 @@ const OSTFRIESLAND_KREISE = [
   { name: 'Stadt Emden', d: 'M247.6,325.5L244.3,328.4L239.0,327.9L241.5,331.1L236.9,335.4L232.4,336.0L229.0,332.3L223.2,337.9L220.0,336.0L207.8,338.7L199.1,332.7L184.2,338.9L176.3,354.7L163.3,359.5L157.3,356.9L151.8,346.3L153.2,338.5L150.2,338.3L146.2,346.3L146.6,354.6L150.0,362.7L157.8,369.3L165.3,367.4L170.0,369.9L218.5,369.8L259.9,377.4L262.4,367.2L261.0,349.4L252.0,344.2L254.3,337.9L247.6,325.5Z', labelX: 210, labelY: 335 }
 ];
 
+// Alle Städte und Gemeinden Ostfrieslands. x/y sind aus echten Koordinaten auf die Karte
+// umgerechnet (geeicht an den Umrissen der Inseln und der Stadt Emden).
+// alias = Ortsteile und andere Schreibweisen, plz = Postleitzahlen der Gemeinde.
 const OSTFRIESLAND_ORTE = [
-  { name: 'Borkum', x: 19, y: 204 },
-  { name: 'Juist', x: 107, y: 148 },
-  { name: 'Norderney', x: 191, y: 132 },
-  { name: 'Baltrum', x: 273, y: 111 },
-  { name: 'Langeoog', x: 322, y: 97 },
-  { name: 'Spiekeroog', x: 385, y: 82 },
-  { name: 'Emden', x: 201, y: 354 },
-  { name: 'Norden', x: 220, y: 201 },
-  { name: 'Aurich', x: 347, y: 298 },
-  { name: 'Wittmund', x: 361, y: 215 },
-  { name: 'Esens', x: 391, y: 174 },
-  { name: 'Wiesmoor', x: 389, y: 344 },
-  { name: 'Leer', x: 321, y: 443 },
-  { name: 'Weener', x: 233, y: 475 }
+  { name: "Borkum", x: 16.9, y: 213.0, alias: [], plz: ["26757"] },
+  { name: "Juist", x: 143.6, y: 155.2, alias: [], plz: ["26571"] },
+  { name: "Norderney", x: 201.1, y: 135.7, alias: [], plz: ["26548"] },
+  { name: "Baltrum", x: 287.0, y: 122.0, alias: [], plz: ["26579"] },
+  { name: "Langeoog", x: 329.3, y: 111.0, alias: [], plz: ["26465"] },
+  { name: "Spiekeroog", x: 408.8, y: 94.1, alias: [], plz: ["26474"] },
+  { name: "Emden", x: 223.5, y: 356.7, alias: ["Larrelt", "Wolthusen", "Borssum", "Barenburg", "Conrebbersweg", "Uphusen"], plz: ["26721", "26723", "26725"] },
+  { name: "Norden", x: 223.5, y: 207.8, alias: ["Norddeich", "Leybuchtpolder", "Westermarsch"], plz: ["26506"] },
+  { name: "Aurich", x: 329.3, y: 289.1, alias: ["Sandhorst", "Wallinghausen", "Tannenhausen", "Middels", "Plaggenburg", "Egels", "Popens", "Extum", "Haxtum"], plz: ["26603", "26605", "26607"] },
+  { name: "Wiesmoor", x: 424.0, y: 324.8, alias: ["Marcardsmoor", "Hinrichsfehn", "Voßbarg"], plz: ["26639"] },
+  { name: "Großefehn", x: 363.5, y: 339.1, alias: ["Ostgroßefehn", "Westgroßefehn", "Timmel", "Spetzerfehn", "Mittegroßefehn", "Holtrop", "Bagband", "Strackholt"], plz: ["26629"] },
+  { name: "Ihlow", x: 312.5, y: 335.2, alias: ["Ihlowerfehn", "Simonswolde", "Riepe", "Westerende", "Ludwigsdorf", "Ochtelbur"], plz: ["26632"] },
+  { name: "Südbrookmerland", x: 289.7, y: 285.8, alias: ["Moordorf", "Victorbur", "Wiegboldsbur", "Münkeboe", "Theene", "Uthwerdum", "Moorhusen"], plz: ["26624"] },
+  { name: "Krummhörn", x: 177.5, y: 322.2, alias: ["Pewsum", "Greetsiel", "Upleward", "Campen", "Loquard", "Rysum", "Groothusen", "Manslagt", "Visquard", "Hamswehrum", "Uttum"], plz: ["26736"] },
+  { name: "Hinte", x: 216.3, y: 324.8, alias: ["Loppersum", "Suurhusen", "Osterhusen", "Westerhusen", "Groß Midlum"], plz: ["26759"] },
+  { name: "Marienhafe", x: 250.1, y: 255.3, alias: ["Brookmerland", "Upgant-Schott", "Osteel", "Rechtsupweg", "Leezdorf", "Wirdum"], plz: ["26529"] },
+  { name: "Großheide", x: 277.5, y: 219.5, alias: ["Arle", "Berumerfehn", "Westerende-Kirchloog"], plz: ["26532"] },
+  { name: "Hage", x: 253.6, y: 203.3, alias: ["Berumbur", "Lütetsburg", "Halbemond", "Hagermarsch"], plz: ["26524"] },
+  { name: "Dornum", x: 309.5, y: 175.3, alias: ["Neßmersiel", "Nessmersiel", "Dornumersiel", "Westeraccum", "Resterhafe"], plz: ["26553"] },
+  { name: "Wittmund", x: 441.9, y: 221.5, alias: ["Carolinensiel", "Harlesiel", "Leerhafe", "Burhafe", "Funnix", "Buttforde", "Asel", "Blersum", "Ardorf"], plz: ["26409"] },
+  { name: "Esens", x: 378.0, y: 174.0, alias: ["Bensersiel", "Holtgast", "Stedesdorf", "Werdum", "Moorweg", "Dunum"], plz: ["26427"] },
+  { name: "Neuharlingersiel", x: 413.4, y: 140.2, alias: [], plz: [] },
+  { name: "Friedeburg", x: 463.2, y: 300.8, alias: ["Reepsholt", "Wiesedermeer", "Marx", "Etzel", "Horsten", "Bentstreek"], plz: ["26446"] },
+  { name: "Westerholt", x: 318.2, y: 210.4, alias: ["Holtriem", "Nenndorf", "Schweindorf", "Utarp", "Eversmeer", "Blomberg", "Neuschoo", "Ochtersum"], plz: ["26556", "26487", "26489"] },
+  { name: "Leer", x: 320.5, y: 445.1, alias: ["Loga", "Heisfelde", "Bingum", "Nüttermoor", "Leerort", "Logabirum", "Hohegaste"], plz: ["26789"] },
+  { name: "Weener", x: 280.6, y: 488.6, alias: ["Möhlenwarf", "Stapelmoor", "Holthusen", "Weenermoor"], plz: ["26826"] },
+  { name: "Moormerland", x: 312.5, y: 395.7, alias: ["Warsingsfehn", "Veenhusen", "Neermoor", "Oldersum", "Jheringsfehn", "Hatshausen", "Boekzetelerfehn"], plz: ["26802"] },
+  { name: "Westoverledingen", x: 310.3, y: 486.7, alias: ["Ihrhove", "Flachsmeer", "Völlenerfehn", "Steenfelde", "Großwolde"], plz: ["26810"] },
+  { name: "Rhauderfehn", x: 362.0, y: 510.1, alias: ["Westrhauderfehn", "Burlage", "Langholt", "Backemoor", "Holte"], plz: ["26817"] },
+  { name: "Ostrhauderfehn", x: 379.9, y: 504.9, alias: ["Idafehn", "Holterfehn", "Potshausen"], plz: ["26842"] },
+  { name: "Uplengen", x: 430.1, y: 434.0, alias: ["Remels", "Jübberde", "Hollen", "Stapel", "Großsander", "Ockenhausen"], plz: ["26670"] },
+  { name: "Hesel", x: 371.9, y: 397.6, alias: ["Holtland", "Brinkum", "Neukamperfehn", "Firrel", "Schwerinsdorf"], plz: ["26835"] },
+  { name: "Bunde", x: 247.9, y: 476.3, alias: ["Wymeer", "Boen", "Dollart", "Bunderhee"], plz: ["26831"] },
+  { name: "Jemgum", x: 291.6, y: 421.0, alias: ["Ditzum", "Holtgaste", "Midlum", "Critzum"], plz: ["26844"] },
+  { name: "Detern", x: 405.0, y: 462.0, alias: ["Stickhausen", "Velde"], plz: ["26847"] },
+  { name: "Filsum", x: 386.0, y: 441.2, alias: ["Jümme", "Nortmoor"], plz: ["26849", "26845"] }
 ];
+
+// Bekannte Ortsteile, die zusätzlich in der Vorschlagsliste der Ort-Felder erscheinen
+const ORT_VORSCHLAEGE_EXTRA = ['Norddeich', 'Greetsiel', 'Pewsum', 'Carolinensiel', 'Harlesiel', 'Bensersiel',
+  'Neßmersiel', 'Dornumersiel', 'Moordorf', 'Warsingsfehn', 'Remels', 'Ihrhove', 'Ditzum', 'Loga', 'Sandhorst'];
+
+function normOrt(text) {
+  return String(text || '').toLowerCase()
+    .replace(/ä/g, 'ae').replace(/ö/g, 'oe').replace(/ü/g, 'ue').replace(/ß/g, 'ss');
+}
+
+// Suchschlüssel: Namen und Ortsteile, längste zuerst ("Ostrhauderfehn" vor "Rhauderfehn")
+const ORT_KEYS = [];
+const ORT_PLZ = {};
+OSTFRIESLAND_ORTE.forEach(o => {
+  [o.name].concat(o.alias).forEach(n => {
+    const key = normOrt(n).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    ORT_KEYS.push({ re: new RegExp('(^|[^a-z])' + key + '(?![a-z])'), len: n.length, ort: o });
+  });
+  o.plz.forEach(p => { ORT_PLZ[p] = o; });
+});
+ORT_KEYS.sort((a, b) => b.len - a.len);
+
+// Ordnet einen frei eingegebenen Ort einer Gemeinde zu – nur ganze Wörter
+// ("Leerhafe" ist nicht "Leer", "Nordenham" nicht "Norden"), sonst über die PLZ.
+const ortCache = new Map();
+function resolveOrt(text) {
+  if (ortCache.has(text)) return ortCache.get(text);
+  const t = normOrt(text);
+  let best = null;
+  let bestPos = Infinity;
+  ORT_KEYS.forEach(k => {
+    const m = k.re.exec(t);
+    if (m) {
+      const pos = m.index + m[1].length;
+      if (pos < bestPos) { best = k.ort; bestPos = pos; }
+    }
+  });
+  if (!best) {
+    const plz = t.match(/(^|[^0-9])(26[0-9]{3})(?![0-9])/);
+    if (plz && ORT_PLZ[plz[2]]) best = ORT_PLZ[plz[2]];
+  }
+  ortCache.set(text, best);
+  return best;
+}
+
+// Genau ein Gemeindename (für den Ort-Filter und die Pins)
+function findOrtByName(text) {
+  const t = normOrt(text).trim();
+  return OSTFRIESLAND_ORTE.find(o => normOrt(o.name) === t) || null;
+}
+
+// Vorschlagsliste für alle Ort-Felder (Formulare und Filter)
+function setupOrtVorschlaege() {
+  if (document.getElementById('ostfriesland-orte')) return;
+  const list = document.createElement('datalist');
+  list.id = 'ostfriesland-orte';
+  OSTFRIESLAND_ORTE.map(o => o.name).concat(ORT_VORSCHLAEGE_EXTRA)
+    .sort((a, b) => a.localeCompare(b, 'de'))
+    .forEach(name => {
+      const opt = document.createElement('option');
+      opt.value = name;
+      list.appendChild(opt);
+    });
+  document.body.appendChild(list);
+  ['j-ort', 'g-ort'].forEach(id => {
+    const input = document.getElementById(id);
+    if (input) input.setAttribute('list', 'ostfriesland-orte');
+  });
+}
+
 
 /* ---------- Kartenfahrt durch Ostfriesland ----------
    Die Karte (SVG) liegt zuerst schräg im Raum, richtet sich beim Scrollen auf
@@ -1307,9 +1403,6 @@ function easeOut(p) { return 1 - Math.pow(1 - p, 3); }
 function easeInOut(p) { return p < 0.5 ? 4 * p * p * p : 1 - Math.pow(-2 * p + 2, 3) / 2; }
 function lerp(a, b, t) { return a + (b - a) * t; }
 
-// Reihenfolge der Flugroute: von den Inseln im Nordwesten Richtung Süden
-const FLIGHT_ROUTE = ['Borkum', 'Juist', 'Norderney', 'Norden', 'Baltrum', 'Langeoog', 'Esens', 'Spiekeroog',
-  'Wittmund', 'Aurich', 'Wiesmoor', 'Emden', 'Leer', 'Weener'];
 const FALLBACK_STOPS = ['Norden', 'Aurich', 'Emden', 'Leer'];
 const MAP_FULL = { cx: 262.5, cy: 320, w: 555 };
 const MAP_RATIO = 520 / 555;
@@ -1320,29 +1413,63 @@ let mapStops = [];
 let mapStopIndex = -2; // -1 = Übersicht am Ende, -2 = noch nichts angezeigt
 let mapPinEls = [];
 let mapSvgEl = null;
+let listingsByOrt = new Map();
+
+// Alle Anzeigen einmal den Gemeinden zuordnen (Anzeigen außerhalb Ostfrieslands bleiben ohne Pin)
+function groupListingsByOrt() {
+  const groups = new Map();
+  jobsData.concat(EXAMPLE_JOBS).map(item => ({ item, type: 'jobs' }))
+    .concat(gesucheData.map(item => ({ item, type: 'gesuche' })))
+    .forEach(entry => {
+      const ort = resolveOrt(entry.item.ort);
+      if (!ort) return;
+      if (!groups.has(ort.name)) groups.set(ort.name, []);
+      groups.get(ort.name).push(entry);
+    });
+  return groups;
+}
 
 function listingsInOrt(ortName) {
-  const needle = ortName.toLowerCase();
-  const jobs = jobsData.concat(EXAMPLE_JOBS).map(item => ({ item, type: 'jobs' }));
-  const gesuche = gesucheData.map(item => ({ item, type: 'gesuche' }));
-  return jobs.concat(gesuche).filter(({ item }) => (item.ort || '').toLowerCase().includes(needle));
+  return listingsByOrt.get(ortName) || [];
+}
+
+// Flugroute: im Nordwesten beginnen, dann immer zum nächstgelegenen Ort
+function orderRoute(orte) {
+  const rest = orte.slice();
+  if (!rest.length) return rest;
+  rest.sort((a, b) => (a.x + a.y) - (b.x + b.y));
+  const route = [rest.shift()];
+  while (rest.length) {
+    const last = route[route.length - 1];
+    let bestIdx = 0;
+    let bestDist = Infinity;
+    rest.forEach((o, i) => {
+      const d = Math.hypot(o.x - last.x, o.y - last.y);
+      if (d < bestDist) { bestDist = d; bestIdx = i; }
+    });
+    route.push(rest.splice(bestIdx, 1)[0]);
+  }
+  return route;
 }
 
 function renderOrtMap() {
   const svgWrap = document.getElementById('mapfly-map');
   if (!svgWrap) return;
 
+  listingsByOrt = groupListingsByOrt();
   const counts = {};
   OSTFRIESLAND_ORTE.forEach(o => { counts[o.name] = listingsInOrt(o.name).length; });
   const aktiveOrte = OSTFRIESLAND_ORTE.filter(o => counts[o.name]);
 
-  // Stopps: Orte mit Anzeigen in Routen-Reihenfolge; bei wenig Daten mit festen Orten auffüllen
-  let stops = FLIGHT_ROUTE.filter(name => counts[name]).slice(0, MAX_STOPS);
-  if (stops.length < 3) {
-    FALLBACK_STOPS.forEach(name => { if (stops.length < 4 && !stops.includes(name)) stops.push(name); });
-    stops.sort((a, b) => FLIGHT_ROUTE.indexOf(a) - FLIGHT_ROUTE.indexOf(b));
+  // Stopps: die Orte mit den meisten Anzeigen (max. 6); bei wenig Daten mit festen Orten auffüllen
+  let chosen = aktiveOrte.slice().sort((a, b) => counts[b.name] - counts[a.name]).slice(0, MAX_STOPS);
+  if (chosen.length < 3) {
+    FALLBACK_STOPS.forEach(name => {
+      if (chosen.length < 4 && !chosen.some(o => o.name === name)) chosen.push(OSTFRIESLAND_ORTE.find(o => o.name === name));
+    });
   }
-  mapStops = stops.map(name => OSTFRIESLAND_ORTE.find(o => o.name === name));
+  mapStops = orderRoute(chosen);
+  const stops = mapStops.map(o => o.name);
 
   let regionsSvg = '';
   OSTFRIESLAND_KREISE.forEach(k => {
@@ -1373,7 +1500,8 @@ function renderOrtMap() {
   const dots = document.getElementById('mapfly-dots');
   if (dots) dots.innerHTML = mapStops.map(() => '<span></span>').join('');
 
-  const total = jobsData.length + gesucheData.length + EXAMPLE_JOBS.length;
+  // nur Anzeigen zählen, die auch einen Pin auf der Karte haben
+  const total = aktiveOrte.reduce((sum, o) => sum + counts[o.name], 0);
   const endText = document.getElementById('mapfly-end-text');
   if (endText) {
     endText.textContent = aktiveOrte.length
@@ -1390,6 +1518,7 @@ function renderMapCard(index) {
   const end = document.getElementById('mapfly-end');
   if (!card || !end) return;
   end.classList.toggle('is-shown', index === -1);
+  document.querySelectorAll('#mapfly-dots span').forEach((d, i) => d.classList.toggle('active', i === index));
   if (index < 0) {
     card.classList.remove('is-shown');
     return;
@@ -2410,6 +2539,7 @@ function renderFilters() {
   ortInput.id = 'filter-ort';
   ortInput.placeholder = 'Ort';
   ortInput.setAttribute('aria-label', 'Ort filtern');
+  ortInput.setAttribute('list', 'ostfriesland-orte');
   ortInput.value = prevOrtValue;
   const ortField = document.createElement('span');
   ortField.className = 'ort-field';
@@ -2465,7 +2595,8 @@ function renderFilters() {
 
 function getFilteredData() {
   const ortFilterEl = document.getElementById('filter-ort');
-  const ortFilter = ortFilterEl ? ortFilterEl.value.toLowerCase() : '';
+  const ortFilter = ortFilterEl ? ortFilterEl.value.trim().toLowerCase() : '';
+  const ortFilterGemeinde = ortFilter ? findOrtByName(ortFilter) : null;
 
   const data = currentTab === 'jobs' ? jobsData.concat(EXAMPLE_JOBS) : gesucheData;
   const savedList = currentTab === 'jobs' ? savedJobIds : savedGesucheIds;
@@ -2473,7 +2604,9 @@ function getFilteredData() {
   const todayStr = now.getFullYear() + '-' + String(now.getMonth() + 1).padStart(2, '0') + '-' + String(now.getDate()).padStart(2, '0');
   const filtered = data.filter(item => {
     const matchArt = !selectedArten.length || selectedArten.includes(item.art);
-    const matchOrt = !ortFilter || (item.ort || '').toLowerCase().includes(ortFilter);
+    const matchOrt = !ortFilter || (ortFilterGemeinde
+      ? resolveOrt(item.ort) === ortFilterGemeinde
+      : (item.ort || '').toLowerCase().includes(ortFilter));
     const searchable = [
       item.titel, item.name, item.firma, item.beschreibung, item.ort
     ].filter(Boolean).join(' ').toLowerCase();
@@ -3251,11 +3384,12 @@ function updateHeroStat() {
 }
 
 function getStatValues() {
-  const alle = jobsData.concat(gesucheData);
-  const orte = OSTFRIESLAND_ORTE.filter(o =>
-    alle.some(item => (item.ort || '').toLowerCase().includes(o.name.toLowerCase()))
-  );
-  return { jobs: jobsData.length, gesuche: gesucheData.length, orte: orte.length };
+  const orte = new Set();
+  jobsData.concat(gesucheData).forEach(item => {
+    const ort = resolveOrt(item.ort);
+    if (ort) orte.add(ort.name);
+  });
+  return { jobs: jobsData.length, gesuche: gesucheData.length, orte: orte.size };
 }
 
 let statsVisible = false;
@@ -3395,6 +3529,7 @@ function quickFilter(art) {
 
 setupHeroTitle();
 setupQuickChips();
+setupOrtVorschlaege();
 setupSheet();
 setupRail();
 
