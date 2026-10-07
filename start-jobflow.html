@@ -279,6 +279,8 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
   paint-order: stroke; stroke: var(--bg); stroke-width: 4px; stroke-linejoin: round;
 }
 .map-pin.is-active .map-pin-dot, .map-pin[role="button"]:hover .map-pin-dot, .map-pin:focus-visible .map-pin-dot { transform: scale(1.35); }
+.map-pin-label { transition: opacity 0.25s ease; }
+.mapfly-svg.is-overview .map-pin:not(.is-active):not(:hover):not(:focus-visible) .map-pin-label { opacity: 0; }
 .map-pin.is-active .map-pin-ring { animation: pin-ring 1.6s ease-out infinite; }
 @keyframes pin-ring { 0% { opacity: 0.8; transform: scale(0.7); } 100% { opacity: 0; transform: scale(2.2); } }
 .mapfly-card {
@@ -1217,7 +1219,41 @@ const MAX_BILD_BYTES = 500 * 1024;
 const EXAMPLE_JOBS = [
   { id: 'beispiel_1', firma: 'Café Deichblick', titel: 'Aushilfe im Service', art: 'Aushilfe', ort: 'Norden', beschreibung: 'Wochenends Frühstück und Kaffee servieren, 4-5 Stunden am Samstag oder Sonntag.', email: 'beispiel@jobflow.de', bild: null, beispiel: true, erstellt: 0 },
   { id: 'beispiel_2', firma: 'Werft Emden GmbH', titel: 'Ferienjob in der Lagerlogistik', art: 'Ferienjob', ort: 'Emden', beschreibung: 'In den Sommerferien Unterstützung beim Kommissionieren und Verpacken, Vollzeit für 2-4 Wochen.', email: 'beispiel@jobflow.de', bild: null, beispiel: true, erstellt: 0 },
-  { id: 'beispiel_3', firma: 'Hof Buttjer', titel: 'Erntehelfer für ein Wochenende', art: 'Sonstiges', ort: 'Wittmund', beschreibung: 'Kurzfristig zwei bis drei Personen für die Erdbeerernte gesucht, Bezahlung nach Stunden.', email: 'beispiel@jobflow.de', bild: null, beispiel: true, erstellt: 0 }
+  { id: 'beispiel_3', firma: 'Hof Buttjer', titel: 'Erntehelfer für ein Wochenende', art: 'Sonstiges', ort: 'Wittmund', beschreibung: 'Kurzfristig zwei bis drei Personen für die Erdbeerernte gesucht, Bezahlung nach Stunden.', email: 'beispiel@jobflow.de', bild: null, beispiel: true, erstellt: 0 },
+  // Je eine Beispielanzeige für jeden weiteren Ort in Ostfriesland (erfundene Betriebe)
+  { id: 'beispiel_4', firma: 'Strandkorbvermietung Nordstrand', titel: 'Ferienjob in der Strandkorbvermietung', art: 'Ferienjob', ort: 'Borkum', beschreibung: 'Strandkörbe auf- und abbauen, Gäste empfangen und kassieren. Juli und August, auch tageweise.', email: 'beispiel@jobflow.de', bild: null, beispiel: true, erstellt: 0 },
+  { id: 'beispiel_5', firma: 'Inselkutscherei Hoogland', titel: 'Aushilfe im Pferdestall', art: 'Aushilfe', ort: 'Juist', beschreibung: 'Pferde füttern, Ställe misten und beim Anspannen helfen. Morgens 3–4 Stunden.', email: 'beispiel@jobflow.de', bild: null, beispiel: true, erstellt: 0 },
+  { id: 'beispiel_6', firma: 'Hotel Seeblick', titel: 'Ausbildung Hotelfachmann/-frau', art: 'Ausbildung', ort: 'Norderney', beschreibung: 'Drei Jahre Ausbildung mit Stationen in Rezeption, Service und Küche. Unterkunft auf der Insel möglich.', email: 'beispiel@jobflow.de', bild: null, beispiel: true, erstellt: 0 },
+  { id: 'beispiel_7', firma: 'Inselcafé Möwennest', titel: 'Minijob im Service', art: 'Minijob', ort: 'Baltrum', beschreibung: 'Kaffee, Kuchen und Eis servieren – am Wochenende und in den Ferien.', email: 'beispiel@jobflow.de', bild: null, beispiel: true, erstellt: 0 },
+  { id: 'beispiel_8', firma: 'Inselrad Fahrradverleih', titel: 'Ferienjob im Fahrradverleih', art: 'Ferienjob', ort: 'Langeoog', beschreibung: 'Räder ausgeben, kleine Reparaturen machen und Gäste beraten. Gern mit Schrauber-Erfahrung.', email: 'beispiel@jobflow.de', bild: null, beispiel: true, erstellt: 0 },
+  { id: 'beispiel_9', firma: 'Inselkaufhaus Spiekeroog', titel: 'Aushilfe an der Kasse', art: 'Aushilfe', ort: 'Spiekeroog', beschreibung: 'Kasse und Regale auffüllen, flexible Schichten nach Absprache.', email: 'beispiel@jobflow.de', bild: null, beispiel: true, erstellt: 0 },
+  { id: 'beispiel_10', firma: 'Gärtnerei Meyerhoff', titel: 'Praktikum im Gartenbau', art: 'Praktikum', ort: 'Aurich', beschreibung: 'Zwei bis vier Wochen reinschnuppern: Pflanzen ziehen, Kunden beraten, Beete anlegen.', email: 'beispiel@jobflow.de', bild: null, beispiel: true, erstellt: 0 },
+  { id: 'beispiel_11', firma: 'Blumenhof Fehnblick', titel: 'Ferienjob zur Blütenzeit', art: 'Ferienjob', ort: 'Wiesmoor', beschreibung: 'Blumen binden, Gewächshaus pflegen und im Hofladen verkaufen. Im Sommer Vollzeit möglich.', email: 'beispiel@jobflow.de', bild: null, beispiel: true, erstellt: 0 },
+  { id: 'beispiel_12', firma: 'Förderverein Fehnmuseum', titel: 'Museumsaufsicht am Wochenende', art: 'Vereinsarbeit', ort: 'Großefehn', beschreibung: 'Sonntags Besucher begrüßen und ein Auge auf die Ausstellung haben. Ehrenamtlich mit Aufwandsentschädigung.', email: 'beispiel@jobflow.de', bild: null, beispiel: true, erstellt: 0 },
+  { id: 'beispiel_13', firma: 'Reiterhof Fehnwiese', titel: 'Aushilfe im Stall', art: 'Aushilfe', ort: 'Ihlow', beschreibung: 'Füttern, Koppeln abstecken, Ponys putzen. Nachmittags oder am Wochenende.', email: 'beispiel@jobflow.de', bild: null, beispiel: true, erstellt: 0 },
+  { id: 'beispiel_14', firma: 'Getränkemarkt Brookmerland', titel: 'Minijob im Getränkemarkt', art: 'Minijob', ort: 'Südbrookmerland', beschreibung: 'Leergut sortieren, Ware einräumen und an der Kasse aushelfen.', email: 'beispiel@jobflow.de', bild: null, beispiel: true, erstellt: 0 },
+  { id: 'beispiel_15', firma: 'Kutterimbiss am Hafen', titel: 'Ferienjob im Fischbrötchen-Imbiss', art: 'Ferienjob', ort: 'Greetsiel', beschreibung: 'Krabben pulen, Brötchen belegen, Gäste bedienen – mitten im Hafen.', email: 'beispiel@jobflow.de', bild: null, beispiel: true, erstellt: 0 },
+  { id: 'beispiel_16', firma: 'Burgcafé Hinte', titel: 'Aushilfe am Wochenende', art: 'Aushilfe', ort: 'Hinte', beschreibung: 'Service im Café und bei Veranstaltungen auf dem Burggelände.', email: 'beispiel@jobflow.de', bild: null, beispiel: true, erstellt: 0 },
+  { id: 'beispiel_17', firma: 'Apotheke am Markt', titel: 'Ausbildung zur PKA', art: 'Ausbildung', ort: 'Marienhafe', beschreibung: 'Ausbildung zum/zur Pharmazeutisch-kaufmännischen Angestellten. Start im August.', email: 'beispiel@jobflow.de', bild: null, beispiel: true, erstellt: 0 },
+  { id: 'beispiel_18', firma: 'Landtechnik Ubben', titel: 'Ausbildung Land- und Baumaschinenmechatroniker/in', art: 'Ausbildung', ort: 'Großheide', beschreibung: 'Trecker, Mähdrescher und Bagger warten und reparieren. Werkstatt mit kleinem, festem Team.', email: 'beispiel@jobflow.de', bild: null, beispiel: true, erstellt: 0 },
+  { id: 'beispiel_19', firma: 'Hofladen Hagermarsch', titel: 'Minijob im Hofladen', art: 'Minijob', ort: 'Hage', beschreibung: 'Eier, Kartoffeln und Gemüse verkaufen. Freitags und samstags.', email: 'beispiel@jobflow.de', bild: null, beispiel: true, erstellt: 0 },
+  { id: 'beispiel_20', firma: 'Campingplatz Neßmersiel', titel: 'Ferienjob an der Rezeption', art: 'Ferienjob', ort: 'Dornum', beschreibung: 'Gäste anmelden, Brötchenbestellungen annehmen und Fragen beantworten.', email: 'beispiel@jobflow.de', bild: null, beispiel: true, erstellt: 0 },
+  { id: 'beispiel_21', firma: 'Tourist-Info Bensersiel', titel: 'Praktikum im Tourismus', art: 'Praktikum', ort: 'Esens', beschreibung: 'Gäste beraten, Veranstaltungen planen und Social Media betreuen. Schülerpraktikum oder freiwillig.', email: 'beispiel@jobflow.de', bild: null, beispiel: true, erstellt: 0 },
+  { id: 'beispiel_22', firma: 'Restaurant Kutterhafen', titel: 'Aushilfe in der Küche', art: 'Aushilfe', ort: 'Neuharlingersiel', beschreibung: 'Vorbereiten, Spülen und einfache Gerichte mitkochen. Abends und am Wochenende.', email: 'beispiel@jobflow.de', bild: null, beispiel: true, erstellt: 0 },
+  { id: 'beispiel_23', firma: 'Tischlerei Gerdes', titel: 'Ausbildung Tischler/in', art: 'Ausbildung', ort: 'Friedeburg', beschreibung: 'Möbel, Treppen und Innenausbau aus Holz. Praktikum vorab möglich.', email: 'beispiel@jobflow.de', bild: null, beispiel: true, erstellt: 0 },
+  { id: 'beispiel_24', firma: 'SV Holtriem', titel: 'Trainer/in für die E-Jugend', art: 'Vereinsarbeit', ort: 'Westerholt', beschreibung: 'Zweimal pro Woche Training und Spiele am Wochenende. Übungsleiterpauschale.', email: 'beispiel@jobflow.de', bild: null, beispiel: true, erstellt: 0 },
+  { id: 'beispiel_25', firma: 'Teehandel am Hafen', titel: 'Minijob im Teeladen', art: 'Minijob', ort: 'Leer', beschreibung: 'Tee abwiegen, verpacken und Kunden beraten. Zwei Nachmittage pro Woche.', email: 'beispiel@jobflow.de', bild: null, beispiel: true, erstellt: 0 },
+  { id: 'beispiel_26', firma: 'Hafencafé Weener', titel: 'Aushilfe im Café', art: 'Aushilfe', ort: 'Weener', beschreibung: 'Service und Theke, vor allem an Sonntagen und Feiertagen.', email: 'beispiel@jobflow.de', bild: null, beispiel: true, erstellt: 0 },
+  { id: 'beispiel_27', firma: 'Kfz-Werkstatt Fehnweg', titel: 'Praktikum Kfz-Mechatronik', art: 'Praktikum', ort: 'Moormerland', beschreibung: 'Reifenwechsel, Inspektionen und Fehlersuche – einmal richtig in die Werkstatt reinschauen.', email: 'beispiel@jobflow.de', bild: null, beispiel: true, erstellt: 0 },
+  { id: 'beispiel_28', firma: 'Pflegedienst Overledingen', titel: 'Minijob Alltagsbegleitung', art: 'Minijob', ort: 'Westoverledingen', beschreibung: 'Senioren beim Einkaufen begleiten, vorlesen, spazieren gehen. Ab 16 Jahren.', email: 'beispiel@jobflow.de', bild: null, beispiel: true, erstellt: 0 },
+  { id: 'beispiel_29', firma: 'Fehnbäckerei Kruse', titel: 'Ausbildung Bäckereifachverkäufer/in', art: 'Ausbildung', ort: 'Rhauderfehn', beschreibung: 'Verkauf, Beratung und kleine Snacks zubereiten. Frühaufsteher willkommen.', email: 'beispiel@jobflow.de', bild: null, beispiel: true, erstellt: 0 },
+  { id: 'beispiel_30', firma: 'Schützenverein Idafehn', titel: 'Helfer/in beim Schützenfest', art: 'Vereinsarbeit', ort: 'Ostrhauderfehn', beschreibung: 'Aufbau, Getränkestand und Abbau am Festwochenende. Mit Verpflegung.', email: 'beispiel@jobflow.de', bild: null, beispiel: true, erstellt: 0 },
+  { id: 'beispiel_31', firma: 'Milchhof Remels', titel: 'Aushilfe auf dem Hof', art: 'Aushilfe', ort: 'Uplengen', beschreibung: 'Kälber tränken, Futter vorbereiten und bei der Heuernte helfen.', email: 'beispiel@jobflow.de', bild: null, beispiel: true, erstellt: 0 },
+  { id: 'beispiel_32', firma: 'Getränkehandel Hesel', titel: 'Fahrer/in für Auslieferungen', art: 'Sonstiges', ort: 'Hesel', beschreibung: 'Getränke an Kunden und Feste ausliefern. Führerschein Klasse B nötig.', email: 'beispiel@jobflow.de', bild: null, beispiel: true, erstellt: 0 },
+  { id: 'beispiel_33', firma: 'Spargelhof Rheiderland', titel: 'Erntehelfer/in Spargel', art: 'Sonstiges', ort: 'Bunde', beschreibung: 'Spargel stechen und sortieren, April bis Juni. Bezahlung nach Stunden.', email: 'beispiel@jobflow.de', bild: null, beispiel: true, erstellt: 0 },
+  { id: 'beispiel_34', firma: 'Fährhaus Ditzum', titel: 'Aushilfe im Service', art: 'Aushilfe', ort: 'Ditzum', beschreibung: 'Gäste bedienen mit Blick auf die Ems. Vor allem in der Saison.', email: 'beispiel@jobflow.de', bild: null, beispiel: true, erstellt: 0 },
+  { id: 'beispiel_35', firma: 'Burgcafé Stickhausen', titel: 'Minijob im Burgcafé', art: 'Minijob', ort: 'Detern', beschreibung: 'Kuchen ausgeben und Tische abräumen, an Wochenenden.', email: 'beispiel@jobflow.de', bild: null, beispiel: true, erstellt: 0 },
+  { id: 'beispiel_36', firma: 'Kanuverleih Jümme', titel: 'Ferienjob im Kanuverleih', art: 'Ferienjob', ort: 'Filsum', beschreibung: 'Boote ausgeben, Paddel und Westen prüfen, Touren erklären. Sommerferien.', email: 'beispiel@jobflow.de', bild: null, beispiel: true, erstellt: 0 }
 ];
 
 function toggleMenu() {
@@ -1433,7 +1469,7 @@ function listingsInOrt(ortName) {
   return listingsByOrt.get(ortName) || [];
 }
 
-// Flugroute: im Nordwesten beginnen, dann immer zum nächstgelegenen Ort
+// Flugroute: im Nordwesten beginnen, dann möglichst kurze Strecke durch alle Stopps
 function orderRoute(orte) {
   const rest = orte.slice();
   if (!rest.length) return rest;
@@ -1449,7 +1485,23 @@ function orderRoute(orte) {
     });
     route.push(rest.splice(bestIdx, 1)[0]);
   }
-  return route;
+  // Danach Teilstrecken umdrehen, solange die Gesamtstrecke kürzer wird (keine weiten Sprünge)
+  const routeLength = (r) => r.reduce((sum, o, i) => (i ? sum + Math.hypot(o.x - r[i - 1].x, o.y - r[i - 1].y) : 0), 0);
+  let best = route;
+  let improved = true;
+  while (improved) {
+    improved = false;
+    for (let i = 1; i < best.length - 1; i++) {
+      for (let j = i + 1; j < best.length; j++) {
+        const candidate = best.slice(0, i).concat(best.slice(i, j + 1).reverse(), best.slice(j + 1));
+        if (routeLength(candidate) < routeLength(best) - 0.01) {
+          best = candidate;
+          improved = true;
+        }
+      }
+    }
+  }
+  return best;
 }
 
 function renderOrtMap() {
@@ -1571,9 +1623,12 @@ function setMapCamera(cam) {
   // Pins und Beschriftung bleiben beim Zoomen gleich groß auf dem Bildschirm
   const k = cam.w / MAP_FULL.w;
   mapSvgEl.style.setProperty('--zoom-k', k.toFixed(4));
+  // In der Gesamtansicht kleinere Pins ohne Namen (sonst überlappen sie), beim Heranzoomen normal
+  const pinScale = k * lerp(0.62, 1, clamp((1 - k) / 0.45, 0, 1));
+  mapSvgEl.classList.toggle('is-overview', k > 0.72);
   mapPinEls.forEach(pin => {
     const o = OSTFRIESLAND_ORTE.find(x => x.name === pin.dataset.ort);
-    pin.setAttribute('transform', 'translate(' + o.x + ' ' + o.y + ') scale(' + k.toFixed(4) + ')');
+    pin.setAttribute('transform', 'translate(' + o.x + ' ' + o.y + ') scale(' + pinScale.toFixed(4) + ')');
   });
 }
 
